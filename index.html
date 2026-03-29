@@ -7,10 +7,10 @@
 <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
 <style>
   :root {
-    --color-a: #2563eb;
-    --color-a-light: #93bbfd;
-    --color-b: #dc2626;
-    --color-b-light: #fca5a5;
+    --color-a: #0d9488;
+    --color-a-light: #5eead4;
+    --color-b: #d97706;
+    --color-b-light: #fcd34d;
     --bg: #fafafa;
     --card-bg: #ffffff;
     --text: #1e293b;
@@ -117,10 +117,10 @@
 <div id="qual-container" class="qual-grid"></div>
 
 <script>
-const COLOR_A = '#2563eb';
-const COLOR_B = '#dc2626';
-const COLOR_A_LIGHT = '#93bbfd';
-const COLOR_B_LIGHT = '#fca5a5';
+const COLOR_A = '#0d9488';
+const COLOR_B = '#d97706';
+const COLOR_A_LIGHT = '#5eead4';
+const COLOR_B_LIGHT = '#fcd34d';
 const LAYOUT_BASE = {
   font: { family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif', size: 13 },
   paper_bgcolor: 'rgba(0,0,0,0)',
@@ -294,7 +294,7 @@ function renderComparative(comp) {
 
   const trace = {
     x: vals, y: pids, mode: 'markers', type: 'scatter',
-    marker: { size: 14, color: COLOR_A, symbol: 'circle', line: { width: 2, color: '#1e40af' } },
+    marker: { size: 14, color: COLOR_A, symbol: 'circle', line: { width: 2, color: '#0f766e' } },
     hovertemplate: '%{y}: %{x} (' + vals.map(v => scaleLabels[String(v)] || v).join(', ').split(', ').map((_, i) => `${scaleLabels[String(vals[i])]}`)[0] + ')<extra></extra>',
     text: vals.map(v => scaleLabels[String(v)] || v),
     hoverinfo: 'text+x',
@@ -303,7 +303,7 @@ function renderComparative(comp) {
   // Mean marker
   const meanTrace = {
     x: [comp.mean], y: ['Mean'], mode: 'markers', type: 'scatter',
-    marker: { size: 16, color: '#1e40af', symbol: 'diamond', line: { width: 2, color: '#1e3a5f' } },
+    marker: { size: 16, color: '#0f766e', symbol: 'diamond', line: { width: 2, color: '#134e4a' } },
     name: 'Mean',
     showlegend: false,
   };
@@ -320,7 +320,7 @@ function renderComparative(comp) {
 
   annotations.push({
     x: comp.mean, y: 'Mean', text: `Mean: ${comp.mean >= 0 ? '+' : ''}${comp.mean.toFixed(2)}`,
-    showarrow: false, font: { size: 11, color: '#1e40af' }, xshift: 60,
+    showarrow: false, font: { size: 11, color: '#0f766e' }, xshift: 60,
   });
 
   Plotly.newPlot('comp-chart', [trace, meanTrace], {
