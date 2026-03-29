@@ -1,0 +1,261 @@
+{
+  "sus": {
+    "participants": {
+      "P4": {
+        "score": 85.0,
+        "condition": "B"
+      },
+      "P5": {
+        "score": 27.5,
+        "condition": "B"
+      },
+      "P6": {
+        "score": 42.5,
+        "condition": "B"
+      },
+      "P7": {
+        "score": 32.5,
+        "condition": "B"
+      },
+      "P8": {
+        "score": 42.5,
+        "condition": "B"
+      },
+      "P9": {
+        "score": 80.0,
+        "condition": "B"
+      },
+      "P1": {
+        "score": 75.0,
+        "condition": "A"
+      },
+      "P2": {
+        "score": 87.5,
+        "condition": "A"
+      },
+      "P3": {
+        "score": 85.0,
+        "condition": "A"
+      },
+      "P10": {
+        "score": 50.0,
+        "condition": "A"
+      },
+      "P11": {
+        "score": 77.5,
+        "condition": "A"
+      },
+      "P12": {
+        "score": 82.5,
+        "condition": "A"
+      }
+    },
+    "condition_stats": {
+      "A": {
+        "mean": 76.25,
+        "sd": 13.67
+      },
+      "B": {
+        "mean": 51.67,
+        "sd": 24.63
+      }
+    }
+  },
+  "nasa_tlx": {
+    "items": {
+      "Mental Demand": {
+        "A": {
+          "mean": 3.5,
+          "sd": 1.38
+        },
+        "B": {
+          "mean": 5.0,
+          "sd": 0.89
+        }
+      },
+      "Effort": {
+        "A": {
+          "mean": 3.83,
+          "sd": 0.75
+        },
+        "B": {
+          "mean": 4.5,
+          "sd": 0.84
+        }
+      },
+      "Annoyance": {
+        "A": {
+          "mean": 3.0,
+          "sd": 1.41
+        },
+        "B": {
+          "mean": 4.67,
+          "sd": 1.21
+        }
+      },
+      "Success": {
+        "A": {
+          "mean": 4.5,
+          "sd": 0.84
+        },
+        "B": {
+          "mean": 3.5,
+          "sd": 1.05
+        }
+      }
+    },
+    "workload_aggregate": {
+      "A": {
+        "mean": 3.44,
+        "sd": 0.91
+      },
+      "B": {
+        "mean": 4.72,
+        "sd": 0.85
+      }
+    }
+  },
+  "overall_satisfaction": {
+    "A": {
+      "mean": 5.5,
+      "sd": 0.55
+    },
+    "B": {
+      "mean": 4.33,
+      "sd": 1.03
+    }
+  },
+  "ai_satisfaction": {
+    "A": {
+      "mean": 4.33,
+      "sd": 1.37
+    },
+    "B": {
+      "mean": 2.83,
+      "sd": 1.83
+    }
+  },
+  "ld_specific": {
+    "Sensible Decisions": {
+      "mean": 5.33,
+      "sd": 0.52
+    },
+    "Understood Layout": {
+      "mean": 6.33,
+      "sd": 0.52
+    },
+    "Felt in Control": {
+      "mean": 6.17,
+      "sd": 0.75
+    },
+    "Comfortable Overriding": {
+      "mean": 5.83,
+      "sd": 1.47
+    },
+    "Right Amount": {
+      "mean": 5.83,
+      "sd": 1.17
+    },
+    "Shrinking Appropriate": {
+      "mean": 4.33,
+      "sd": 1.86
+    },
+    "Visual Communication": {
+      "mean": 6.5,
+      "sd": 0.55
+    },
+    "Appearance Understanding": {
+      "mean": 5.67,
+      "sd": 0.52
+    },
+    "Helped Focus": {
+      "mean": 5.17,
+      "sd": 2.14
+    }
+  },
+  "comparative": {
+    "values": {
+      "P1": 1.0,
+      "P2": 2.0,
+      "P3": 2.0,
+      "P10": 1.0,
+      "P11": -1.0,
+      "P12": 1.0
+    },
+    "mean": 1.0
+  },
+  "qualitative": {
+    "P4": {
+      "condition": "B",
+      "most_useful": "It was easy to use because the AI provided helpful and clear guidance.",
+      "confusing_missing": "Some items were difficult to find. I had trouble locating the subcategory, and it was also hard to identify the first campaign.",
+      "ld_comments": "The AI\u2019s responses were sometimes vague. For example, when it suggested that additional categorization was needed, it would have been better if it had provided more detailed guidance."
+    },
+    "P5": {
+      "condition": "B",
+      "most_useful": "Adding new views was the most useful feature. I liked that I could easily create new charts whenever needed.",
+      "confusing_missing": "There were many features such as filters, views, and detailed views, but the lack of guidance for each function made them difficult to use.",
+      "ld_comments": ""
+    },
+    "P6": {
+      "condition": "B",
+      "most_useful": "Because the dashboard template was predefined, it was convenient for quickly creating simple tables.",
+      "confusing_missing": "It would be helpful if I could search when selecting multiple categories while creating a table. Also, when setting attributes\u2014especially for dates\u2014there are too many options, which makes it difficult to choose later time ranges. It would be better if I could specify dates using a search function or a slider/bar.",
+      "ld_comments": ""
+    },
+    "P7": {
+      "condition": "B",
+      "most_useful": "I hope it can introduce something about what is the dataset like, so that I can know what visualization I can create. And if AI can understand dataset better, it will be better",
+      "confusing_missing": "I can not create a visualization while using it, so I can not find out some question's solution",
+      "ld_comments": ""
+    },
+    "P8": {
+      "condition": "B",
+      "most_useful": "The colors and texts helped a lot. It's in general fairly easy to jump onboard and start seeking info to answer the questions. But the AI feature didn't help so much, although it still prompted me to some details that I've missed.",
+      "confusing_missing": "I didn't know I needed to click the countries on the map to see further details. Also, \"add a view\" feels quite difficult to use. I would need more time to get familiar with it.",
+      "ld_comments": "I did system B"
+    },
+    "P9": {
+      "condition": "B",
+      "most_useful": "I can cross-check with an AI assistant if my initial intuition about where to find the data is correct (though it might result in false confidence)",
+      "confusing_missing": "It felt like there were a few artificial limitations, which make sense in a way to reduce hallucinations, but caused me more work (e.g., typing out the categories by hand instead of having the AI type it out for me and me double-checking)",
+      "ld_comments": ""
+    },
+    "P1": {
+      "condition": "A",
+      "most_useful": "Creating plots with pre-structured format with AI was helpful.",
+      "confusing_missing": "Before starting analysis, It would be better if there are some more intuitive information about data structure (e.g. components, properties). Also, it was unclear what the plot would look like when selecting components for each plot type.",
+      "ld_comments": "Some kind of preview when selecting components of the plot would be nice. And maybe explanation of data overview could be helpful too."
+    },
+    "P2": {
+      "condition": "A",
+      "most_useful": "The most convenient features were that a point gets selected when I click, and the date changes when I drag.",
+      "confusing_missing": "It felt inconvenient when I tried to directly manipulate the table. For example, after creating a table with fields like \u201ctype\u201d and \u201cregion,\u201d it would be more convenient if I could easily add additional conditions or filters.",
+      "ld_comments": "As I mentioned in the usability issues, it would be helpful if I could easily add, remove, and select additional options when working with tables. (Though it\u2019s possible that this feature already exists and I just didn\u2019t use it properly.)"
+    },
+    "P3": {
+      "condition": "A",
+      "most_useful": "AI is very helpful.",
+      "confusing_missing": "After clicking the bar on the bar graph for more information, I couldn't find the button to go back.",
+      "ld_comments": ""
+    },
+    "P10": {
+      "condition": "A",
+      "most_useful": "The AI integration and highlighting feature",
+      "confusing_missing": "There were a blot a visualizations. It takes time to get used to a dashboard",
+      "ld_comments": "No"
+    },
+    "P11": {
+      "condition": "A",
+      "most_useful": "The best thing about the dashboard was the AI chat's knowledge of the context without the underlying data - such a nice thing to have in what could otherwise be a privacy nightmare. It held my hand just right, instead of spoon-feeding me.. If I were to put it metaphorically, it felt akin to riding an e-bike with pedal assist. I particularly loved that I had full control if I wanted to create my own dashboard or ask AI to do so, even though the AI was so good that I didn't feel the need to tweak anything beyond what's most basic.",
+      "confusing_missing": "The most frustrating aspect for me was not the AI, but the dashboard itself. The dimming feature was helpful when the AI guided my attention because it felt purposeful and intuitive, making it easier to follow along. However, having the interface dimmed by default became cumbersome, especially when I needed to perform cross-dashboard comparisons. Over time, this became genuinely irritating. To be honest, it felt like AI was the truly standout feature and the dashboard felt like an accessory to it.. and I don't know if that is good or not.",
+      "ld_comments": "To clarify, the system was not difficult to use, but I would have preferred more direct control. Features such as the ability to reorder tiles or manually zoom into a dashboard at full scale would have significantly improved the experience. I particularly felt the absence of these controls during comparison tasks, as I had to repeatedly scroll between tiles, which disrupted my workflow."
+    },
+    "P12": {
+      "condition": "A",
+      "most_useful": "- Zooming into specific visualizations was helpful to focus\n - AI Features were helpful to quickly spawn specific visualizations for my query",
+      "confusing_missing": "- I would have liked to drag and dropped certain charts\n - I would have liked to always see the active filters once I scroll up and down",
+      "ld_comments": "Advanced features, such as grouping data, would be helpful for certain tasks."
+    }
+  }
+}

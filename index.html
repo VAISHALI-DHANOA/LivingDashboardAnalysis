@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Living Dashboard Study — Results Explorer</title>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<style>
+  :root {
+    --color-a: #2563eb;
+    --color-a-light: #93bbfd;
+    --color-b: #dc2626;
+    --color-b-light: #fca5a5;
+    --bg: #fafafa;
+    --card-bg: #ffffff;
+    --text: #1e293b;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.6;
+    max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem;
+  }
+  h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.25rem; }
+  h2 { font-size: 1.25rem; font-weight: 600; margin: 2.5rem 0 0.75rem; border-bottom: 2px solid var(--border); padding-bottom: 0.4rem; }
+  h3 { font-size: 1rem; font-weight: 600; margin: 1.5rem 0 0.5rem; }
+  .subtitle { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem; }
+  .methodology {
+    background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px;
+    padding: 1.25rem 1.5rem; margin-bottom: 2rem; font-size: 0.9rem; color: var(--text-muted);
+  }
+  .methodology strong { color: var(--text); }
+  .legend {
+    display: flex; gap: 1.5rem; margin-bottom: 1rem; font-size: 0.85rem; align-items: center;
+  }
+  .legend-item { display: flex; align-items: center; gap: 0.4rem; }
+  .legend-swatch { width: 14px; height: 14px; border-radius: 3px; }
+  .chart-box {
+    background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px;
+    padding: 1rem; margin-bottom: 1.5rem;
+  }
+  .chart-note { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem; }
+
+  /* Qualitative cards */
+  .qual-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+  .qual-card {
+    background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px;
+    padding: 1.25rem; position: relative;
+  }
+  .qual-card.cond-a { border-left: 4px solid var(--color-a); }
+  .qual-card.cond-b { border-left: 4px solid var(--color-b); }
+  .qual-header {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;
+  }
+  .qual-pid { font-weight: 700; font-size: 1rem; }
+  .qual-badge {
+    font-size: 0.7rem; font-weight: 600; padding: 0.15rem 0.5rem; border-radius: 10px;
+    color: white;
+  }
+  .badge-a { background: var(--color-a); }
+  .badge-b { background: var(--color-b); }
+  .qual-section { margin-bottom: 0.75rem; }
+  .qual-section:last-child { margin-bottom: 0; }
+  .qual-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 0.2rem; }
+  .qual-text { font-size: 0.88rem; }
+  .qual-text.empty { color: #cbd5e1; font-style: italic; }
+</style>
+</head>
+<body>
+
+<h1>Living Dashboard Study — Results Explorer</h1>
+<p class="subtitle">HCI study comparing an AI-driven Living Dashboard (System A) with a static Baseline (System B)</p>
+
+<div class="methodology">
+  <strong>Study Design &amp; Methodology.</strong>
+  This between-subjects study compared two dashboard conditions with 12 participants (6 per condition).
+  <strong>System A (Living Dashboard)</strong> — participants P1, P2, P3, P10, P11, P12 — featured an AI-driven interface that
+  automatically resized, dimmed, and rearranged views based on user activity.
+  <strong>System B (Baseline)</strong> — participants P4, P5, P6, P7, P8, P9 — provided a conventional static dashboard.
+  <br><br>
+  <strong>Scoring:</strong>
+  <em>SUS</em> uses a 1–5 Likert scale across 10 items; all negative items were pre-reverse-coded, so the formula is
+  &Sigma;(item&minus;1)&times;2.5, yielding 0–100.
+  <em>NASA-TLX</em> items use a 1–7 scale; the workload aggregate is the mean of Mental Demand, Effort, and Annoyance (excluding Success).
+  Satisfaction and LD-specific items use 1–7 Likert scales.
+  The comparative item uses a &minus;2 (much worse) to +2 (much better) scale.
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-swatch" style="background:var(--color-a)"></div> System A (Living Dashboard)</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:var(--color-b)"></div> System B (Baseline)</div>
+</div>
+
+<!-- Charts -->
+<h2>SUS Scores</h2>
+<div class="chart-box"><div id="sus-chart"></div></div>
+<p class="chart-note">Horizontal lines show condition means. Benchmark bands: 50 = poor, 68 = average, 80 = good.</p>
+
+<h2>NASA-TLX</h2>
+<div class="chart-box"><div id="nasa-chart"></div></div>
+<p class="chart-note">For Mental Demand, Effort, and Annoyance lower is better. For Success higher is better. Error bars show &plusmn;1 SD.</p>
+
+<h2>Overall &amp; AI Satisfaction</h2>
+<div class="chart-box"><div id="sat-chart"></div></div>
+
+<h2>LD-Specific Items (System A Only)</h2>
+<div class="chart-box"><div id="ld-chart"></div></div>
+<p class="chart-note">Sorted by mean descending. The highest-variance item is highlighted. Error bars show &plusmn;1 SD.</p>
+
+<h2>Comparative Item (System A Only)</h2>
+<div class="chart-box"><div id="comp-chart"></div></div>
+<p class="chart-note">Each dot is one System A participant's rating of the Living Dashboard compared to a static dashboard.</p>
+
+<h2>Qualitative Feedback</h2>
+<div id="qual-container" class="qual-grid"></div>
+
+<script>
+const COLOR_A = '#2563eb';
+const COLOR_B = '#dc2626';
+const COLOR_A_LIGHT = '#93bbfd';
+const COLOR_B_LIGHT = '#fca5a5';
+const LAYOUT_BASE = {
+  font: { family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif', size: 13 },
+  paper_bgcolor: 'rgba(0,0,0,0)',
+  plot_bgcolor: 'rgba(0,0,0,0)',
+  margin: { t: 30, b: 50, l: 60, r: 30 },
+};
+
+fetch('results.json')
+  .then(r => r.json())
+  .then(data => {
+    renderSUS(data.sus);
+    renderNASA(data.nasa_tlx);
+    renderSatisfaction(data.overall_satisfaction, data.ai_satisfaction);
+    renderLD(data.ld_specific);
+    renderComparative(data.comparative);
+    renderQualitative(data.qualitative);
+  })
+  .catch(err => {
+    document.body.innerHTML += `<p style="color:red;margin-top:2rem;">Error loading results.json: ${err.message}. Run analysis.py first.</p>`;
+  });
+
+/* ── SUS ─────────────────────────────────────────────────────────── */
+function renderSUS(sus) {
+  const pids = Object.keys(sus.participants).sort((a, b) => parseInt(a.slice(1)) - parseInt(b.slice(1)));
+  const scores = pids.map(p => sus.participants[p].score);
+  const colors = pids.map(p => sus.participants[p].condition === 'A' ? COLOR_A : COLOR_B);
+
+  const trace = {
+    x: pids, y: scores, type: 'bar',
+    marker: { color: colors },
+    text: scores.map(s => s.toFixed(0)),
+    textposition: 'outside',
+    hovertemplate: '%{x}: %{y:.1f}<extra></extra>',
+  };
+
+  const meanA = sus.condition_stats.A.mean;
+  const meanB = sus.condition_stats.B.mean;
+
+  const shapes = [
+    // Benchmark bands
+    { type: 'rect', x0: -0.5, x1: pids.length - 0.5, y0: 0, y1: 50, fillcolor: '#fee2e2', opacity: 0.25, line: { width: 0 }, layer: 'below' },
+    { type: 'rect', x0: -0.5, x1: pids.length - 0.5, y0: 50, y1: 68, fillcolor: '#fef9c3', opacity: 0.25, line: { width: 0 }, layer: 'below' },
+    { type: 'rect', x0: -0.5, x1: pids.length - 0.5, y0: 68, y1: 80, fillcolor: '#dcfce7', opacity: 0.2, line: { width: 0 }, layer: 'below' },
+    { type: 'rect', x0: -0.5, x1: pids.length - 0.5, y0: 80, y1: 100, fillcolor: '#d1fae5', opacity: 0.25, line: { width: 0 }, layer: 'below' },
+    // Mean lines
+    { type: 'line', x0: -0.5, x1: pids.length - 0.5, y0: meanA, y1: meanA, line: { color: COLOR_A, width: 2, dash: 'dash' } },
+    { type: 'line', x0: -0.5, x1: pids.length - 0.5, y0: meanB, y1: meanB, line: { color: COLOR_B, width: 2, dash: 'dash' } },
+  ];
+
+  const annotations = [
+    { x: pids.length - 0.6, y: meanA, text: `A mean: ${meanA}`, showarrow: false, font: { color: COLOR_A, size: 11 }, xanchor: 'right', yshift: 10 },
+    { x: pids.length - 0.6, y: meanB, text: `B mean: ${meanB}`, showarrow: false, font: { color: COLOR_B, size: 11 }, xanchor: 'right', yshift: -12 },
+    { x: -0.5, y: 50, text: 'Poor (50)', showarrow: false, font: { size: 10, color: '#9ca3af' }, xanchor: 'left', yshift: -10 },
+    { x: -0.5, y: 68, text: 'Avg (68)', showarrow: false, font: { size: 10, color: '#9ca3af' }, xanchor: 'left', yshift: -10 },
+    { x: -0.5, y: 80, text: 'Good (80)', showarrow: false, font: { size: 10, color: '#9ca3af' }, xanchor: 'left', yshift: -10 },
+  ];
+
+  Plotly.newPlot('sus-chart', [trace], {
+    ...LAYOUT_BASE,
+    yaxis: { title: 'SUS Score', range: [0, 105], gridcolor: '#f1f5f9' },
+    xaxis: { title: 'Participant' },
+    shapes, annotations,
+    height: 380,
+  }, { responsive: true, displayModeBar: false });
+}
+
+/* ── NASA-TLX ────────────────────────────────────────────────────── */
+function renderNASA(nasa) {
+  const items = ['Mental Demand', 'Effort', 'Annoyance', 'Success'];
+  const meansA = items.map(i => nasa.items[i].A.mean);
+  const meansB = items.map(i => nasa.items[i].B.mean);
+  const sdsA = items.map(i => nasa.items[i].A.sd);
+  const sdsB = items.map(i => nasa.items[i].B.sd);
+
+  const traceA = {
+    x: items, y: meansA, name: 'System A', type: 'bar',
+    marker: { color: COLOR_A },
+    error_y: { type: 'data', array: sdsA, visible: true, color: '#475569' },
+  };
+  const traceB = {
+    x: items, y: meansB, name: 'System B', type: 'bar',
+    marker: { color: COLOR_B },
+    error_y: { type: 'data', array: sdsB, visible: true, color: '#475569' },
+  };
+
+  const annotations = items.map((item, i) => ({
+    x: item, y: 0.15, text: item === 'Success' ? '(higher = better)' : '(lower = better)',
+    showarrow: false, font: { size: 9, color: '#9ca3af' }, yanchor: 'bottom',
+  }));
+
+  Plotly.newPlot('nasa-chart', [traceA, traceB], {
+    ...LAYOUT_BASE,
+    barmode: 'group',
+    yaxis: { title: 'Rating (1–7)', range: [0, 7.5], gridcolor: '#f1f5f9', dtick: 1 },
+    legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
+    annotations,
+    height: 360,
+  }, { responsive: true, displayModeBar: false });
+}
+
+/* ── Satisfaction ─────────────────────────────────────────────────── */
+function renderSatisfaction(overall, ai) {
+  const labels = ['Overall Satisfaction', 'AI Satisfaction'];
+  const traceA = {
+    x: labels, y: [overall.A.mean, ai.A.mean], name: 'System A', type: 'bar',
+    marker: { color: COLOR_A },
+    error_y: { type: 'data', array: [overall.A.sd, ai.A.sd], visible: true, color: '#475569' },
+    text: [overall.A.mean.toFixed(1), ai.A.mean.toFixed(1)], textposition: 'outside',
+  };
+  const traceB = {
+    x: labels, y: [overall.B.mean, ai.B.mean], name: 'System B', type: 'bar',
+    marker: { color: COLOR_B },
+    error_y: { type: 'data', array: [overall.B.sd, ai.B.sd], visible: true, color: '#475569' },
+    text: [overall.B.mean.toFixed(1), ai.B.mean.toFixed(1)], textposition: 'outside',
+  };
+
+  Plotly.newPlot('sat-chart', [traceA, traceB], {
+    ...LAYOUT_BASE,
+    barmode: 'group',
+    yaxis: { title: 'Rating (1–7)', range: [0, 8], gridcolor: '#f1f5f9', dtick: 1 },
+    legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
+    height: 320,
+  }, { responsive: true, displayModeBar: false });
+}
+
+/* ── LD-Specific ─────────────────────────────────────────────────── */
+function renderLD(ld) {
+  const entries = Object.entries(ld).sort((a, b) => b[1].mean - a[1].mean);
+  const labels = entries.map(e => e[0]);
+  const means = entries.map(e => e[1].mean);
+  const sds = entries.map(e => e[1].sd);
+
+  // Find highest-variance item
+  const maxSD = Math.max(...sds);
+  const colors = sds.map(sd => sd === maxSD ? '#f59e0b' : COLOR_A);
+
+  const trace = {
+    y: labels, x: means, type: 'bar', orientation: 'h',
+    marker: { color: colors },
+    error_x: { type: 'data', array: sds, visible: true, color: '#475569' },
+    text: means.map(m => m.toFixed(1)),
+    textposition: 'outside',
+    hovertemplate: '%{y}: %{x:.2f} (SD %{error_x.array:.2f})<extra></extra>',
+  };
+
+  // Find the highlighted item name
+  const highlightIdx = sds.indexOf(maxSD);
+  const highlightName = labels[highlightIdx];
+
+  Plotly.newPlot('ld-chart', [trace], {
+    ...LAYOUT_BASE,
+    xaxis: { title: 'Mean Rating (1–7)', range: [0, 8], gridcolor: '#f1f5f9', dtick: 1 },
+    yaxis: { automargin: true },
+    margin: { ...LAYOUT_BASE.margin, l: 200 },
+    height: 400,
+    annotations: [{
+      x: means[highlightIdx] + sds[highlightIdx] + 0.3,
+      y: highlightName,
+      text: 'highest variance',
+      showarrow: true, arrowhead: 2, arrowcolor: '#f59e0b',
+      font: { size: 10, color: '#f59e0b' },
+    }],
+  }, { responsive: true, displayModeBar: false });
+}
+
+/* ── Comparative ─────────────────────────────────────────────────── */
+function renderComparative(comp) {
+  const pids = Object.keys(comp.values).sort((a, b) => parseInt(a.slice(1)) - parseInt(b.slice(1)));
+  const vals = pids.map(p => comp.values[p]);
+  const scaleLabels = { '-2': 'Much Worse', '-1': 'Worse', '0': 'Same', '1': 'Better', '2': 'Much Better' };
+
+  const trace = {
+    x: vals, y: pids, mode: 'markers', type: 'scatter',
+    marker: { size: 14, color: COLOR_A, symbol: 'circle', line: { width: 2, color: '#1e40af' } },
+    hovertemplate: '%{y}: %{x} (' + vals.map(v => scaleLabels[String(v)] || v).join(', ').split(', ').map((_, i) => `${scaleLabels[String(vals[i])]}`)[0] + ')<extra></extra>',
+    text: vals.map(v => scaleLabels[String(v)] || v),
+    hoverinfo: 'text+x',
+  };
+
+  // Mean marker
+  const meanTrace = {
+    x: [comp.mean], y: ['Mean'], mode: 'markers', type: 'scatter',
+    marker: { size: 16, color: '#1e40af', symbol: 'diamond', line: { width: 2, color: '#1e3a5f' } },
+    name: 'Mean',
+    showlegend: false,
+  };
+
+  const shapes = [{
+    type: 'line', x0: 0, x1: 0, y0: -0.5, y1: pids.length + 0.5,
+    line: { color: '#94a3b8', width: 2, dash: 'dot' },
+  }];
+
+  const annotations = Object.entries(scaleLabels).map(([val, label]) => ({
+    x: parseFloat(val), y: -0.6, text: label, showarrow: false,
+    font: { size: 9, color: '#9ca3af' }, yshift: -18,
+  }));
+
+  annotations.push({
+    x: comp.mean, y: 'Mean', text: `Mean: ${comp.mean >= 0 ? '+' : ''}${comp.mean.toFixed(2)}`,
+    showarrow: false, font: { size: 11, color: '#1e40af' }, xshift: 60,
+  });
+
+  Plotly.newPlot('comp-chart', [trace, meanTrace], {
+    ...LAYOUT_BASE,
+    xaxis: { range: [-2.5, 2.5], dtick: 1, gridcolor: '#f1f5f9', zeroline: false },
+    yaxis: { automargin: true },
+    shapes, annotations,
+    showlegend: false,
+    height: 280,
+    margin: { ...LAYOUT_BASE.margin, b: 70 },
+  }, { responsive: true, displayModeBar: false });
+}
+
+/* ── Qualitative ─────────────────────────────────────────────────── */
+function renderQualitative(qual) {
+  const container = document.getElementById('qual-container');
+  const pids = Object.keys(qual).sort((a, b) => parseInt(a.slice(1)) - parseInt(b.slice(1)));
+
+  // Group by condition: System A first
+  const sortedPids = pids.sort((a, b) => {
+    if (qual[a].condition !== qual[b].condition) return qual[a].condition === 'A' ? -1 : 1;
+    return parseInt(a.slice(1)) - parseInt(b.slice(1));
+  });
+
+  sortedPids.forEach(pid => {
+    const q = qual[pid];
+    const condClass = q.condition === 'A' ? 'cond-a' : 'cond-b';
+    const badgeClass = q.condition === 'A' ? 'badge-a' : 'badge-b';
+    const condLabel = q.condition === 'A' ? 'System A — Living Dashboard' : 'System B — Baseline';
+
+    const sections = [
+      { label: 'Most Useful / Helpful', text: q.most_useful },
+      { label: 'Confusing, Frustrating, or Missing', text: q.confusing_missing },
+    ];
+    if (q.condition === 'A') {
+      sections.push({ label: 'Comments on the Living Dashboard Concept', text: q.ld_comments });
+    }
+
+    const sectionsHTML = sections.map(s => {
+      const isEmpty = !s.text || s.text === 'nan' || s.text.trim() === '';
+      return `<div class="qual-section">
+        <div class="qual-label">${s.label}</div>
+        <div class="qual-text ${isEmpty ? 'empty' : ''}">${isEmpty ? 'No response' : escapeHtml(s.text)}</div>
+      </div>`;
+    }).join('');
+
+    container.innerHTML += `
+      <div class="qual-card ${condClass}">
+        <div class="qual-header">
+          <span class="qual-pid">${pid}</span>
+          <span class="qual-badge ${badgeClass}">${condLabel}</span>
+        </div>
+        ${sectionsHTML}
+      </div>`;
+  });
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+</script>
+
+</body>
+</html>
