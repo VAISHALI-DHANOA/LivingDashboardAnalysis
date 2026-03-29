@@ -144,35 +144,45 @@ fetch('results.json')
 
 /* ── SUS ─────────────────────────────────────────────────────────── */
 function renderSUS(sus) {
-  const pids = Object.keys(sus.participants).sort((a, b) => parseInt(a.slice(1)) - parseInt(b.slice(1)));
-  const scores = pids.map(p => sus.participants[p].score);
-  const colors = pids.map(p => sus.participants[p].condition === 'A' ? COLOR_A : COLOR_B);
+  // Group by condition: System A (L*) on the left, gap, System B (B*) on the right
+  const allPids = Object.keys(sus.participants);
+  const pidsA = allPids.filter(p => sus.participants[p].condition === 'A').sort((a, b) => parseInt(a.slice(1)) - parseInt(b.slice(1)));
+  const pidsB = allPids.filter(p => sus.participants[p].condition === 'B').sort((a, b) => parseInt(a.slice(1)) - parseInt(b.slice(1)));
+  const xLabels = [...pidsA, '', ...pidsB];  // empty string creates visual gap
+  const scores  = [...pidsA.map(p => sus.participants[p].score), null, ...pidsB.map(p => sus.participants[p].score)];
+  const colors  = [...pidsA.map(() => COLOR_A), 'rgba(0,0,0,0)', ...pidsB.map(() => COLOR_B)];
 
   const trace = {
-    x: pids, y: scores, type: 'bar',
+    x: xLabels, y: scores, type: 'bar',
     marker: { color: colors },
-    text: scores.map(s => s.toFixed(0)),
+    text: scores.map(s => s !== null ? s.toFixed(0) : ''),
     textposition: 'outside',
     hovertemplate: '%{x}: %{y:.1f}<extra></extra>',
   };
 
   const meanA = sus.condition_stats.A.mean;
   const meanB = sus.condition_stats.B.mean;
+  const n = xLabels.length;
 
   const shapes = [
     // Benchmark bands
-    { type: 'rect', x0: -0.5, x1: pids.length - 0.5, y0: 0, y1: 50, fillcolor: '#fee2e2', opacity: 0.25, line: { width: 0 }, layer: 'below' },
-    { type: 'rect', x0: -0.5, x1: pids.length - 0.5, y0: 50, y1: 68, fillcolor: '#fef9c3', opacity: 0.25, line: { width: 0 }, layer: 'below' },
-    { type: 'rect', x0: -0.5, x1: pids.length - 0.5, y0: 68, y1: 80, fillcolor: '#dcfce7', opacity: 0.2, line: { width: 0 }, layer: 'below' },
-    { type: 'rect', x0: -0.5, x1: pids.length - 0.5, y0: 80, y1: 100, fillcolor: '#d1fae5', opacity: 0.25, line: { width: 0 }, layer: 'below' },
-    // Mean lines
-    { type: 'line', x0: -0.5, x1: pids.length - 0.5, y0: meanA, y1: meanA, line: { color: COLOR_A, width: 2, dash: 'dash' } },
-    { type: 'line', x0: -0.5, x1: pids.length - 0.5, y0: meanB, y1: meanB, line: { color: COLOR_B, width: 2, dash: 'dash' } },
+    { type: 'rect', x0: -0.5, x1: n - 0.5, y0: 0, y1: 50, fillcolor: '#fee2e2', opacity: 0.25, line: { width: 0 }, layer: 'below' },
+    { type: 'rect', x0: -0.5, x1: n - 0.5, y0: 50, y1: 68, fillcolor: '#fef9c3', opacity: 0.25, line: { width: 0 }, layer: 'below' },
+    { type: 'rect', x0: -0.5, x1: n - 0.5, y0: 68, y1: 80, fillcolor: '#dcfce7', opacity: 0.2, line: { width: 0 }, layer: 'below' },
+    { type: 'rect', x0: -0.5, x1: n - 0.5, y0: 80, y1: 100, fillcolor: '#d1fae5', opacity: 0.25, line: { width: 0 }, layer: 'below' },
+    // Mean lines — scoped to each condition's region
+    { type: 'line', x0: -0.5, x1: pidsA.length - 0.5, y0: meanA, y1: meanA, line: { color: COLOR_A, width: 2, dash: 'dash' } },
+    { type: 'line', x0: pidsA.length + 0.5, x1: n - 0.5, y0: meanB, y1: meanB, line: { color: COLOR_B, width: 2, dash: 'dash' } },
   ];
 
   const annotations = [
-    { x: pids.length - 0.6, y: meanA, text: `A mean: ${meanA}`, showarrow: false, font: { color: COLOR_A, size: 11 }, xanchor: 'right', yshift: 10 },
-    { x: pids.length - 0.6, y: meanB, text: `B mean: ${meanB}`, showarrow: false, font: { color: COLOR_B, size: 11 }, xanchor: 'right', yshift: -12 },
+    // Condition group labels
+    { x: pidsA[Math.floor(pidsA.length / 2)], y: 104, text: 'Living Dashboard', showarrow: false, font: { color: COLOR_A, size: 12, weight: 'bold' } },
+    { x: xLabels[pidsA.length + 1 + Math.floor(pidsB.length / 2)], y: 104, text: 'Baseline', showarrow: false, font: { color: COLOR_B, size: 12, weight: 'bold' } },
+    // Mean labels
+    { x: pidsA[pidsA.length - 1], y: meanA, text: `M=${meanA}`, showarrow: false, font: { color: COLOR_A, size: 10 }, xanchor: 'left', xshift: 8, yshift: 10 },
+    { x: xLabels[n - 1], y: meanB, text: `M=${meanB}`, showarrow: false, font: { color: COLOR_B, size: 10 }, xanchor: 'left', xshift: 8, yshift: 10 },
+    // Benchmark labels
     { x: -0.5, y: 50, text: 'Poor (50)', showarrow: false, font: { size: 10, color: '#9ca3af' }, xanchor: 'left', yshift: -10 },
     { x: -0.5, y: 68, text: 'Avg (68)', showarrow: false, font: { size: 10, color: '#9ca3af' }, xanchor: 'left', yshift: -10 },
     { x: -0.5, y: 80, text: 'Good (80)', showarrow: false, font: { size: 10, color: '#9ca3af' }, xanchor: 'left', yshift: -10 },
@@ -180,10 +190,10 @@ function renderSUS(sus) {
 
   Plotly.newPlot('sus-chart', [trace], {
     ...LAYOUT_BASE,
-    yaxis: { title: 'SUS Score', range: [0, 105], gridcolor: '#f1f5f9' },
-    xaxis: { title: 'Participant' },
+    yaxis: { title: 'SUS Score', range: [0, 112], gridcolor: '#f1f5f9' },
+    xaxis: { title: 'Participant', categoryorder: 'array', categoryarray: xLabels },
     shapes, annotations,
-    height: 380,
+    height: 400,
   }, { responsive: true, displayModeBar: false });
 }
 
