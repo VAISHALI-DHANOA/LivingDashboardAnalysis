@@ -76,9 +76,11 @@
 <div class="methodology">
   <strong>Study Design &amp; Methodology.</strong>
   This between-subjects study compared two dashboard conditions with 12 participants (6 per condition).
-  <strong>System A (Living Dashboard)</strong> — participants P1, P2, P3, P10, P11, P12 — featured an AI-driven interface that
+  <br>
+  <strong>System A (Living Dashboard)</strong> — participants L1 - L6 — featured an AI-driven interface that
   automatically resized, dimmed, and rearranged views based on user activity.
-  <strong>System B (Baseline)</strong> — participants P4, P5, P6, P7, P8, P9 — provided a conventional static dashboard.
+  <br>
+  <strong>System B (Baseline)</strong> — participants B1 - B6 — provided a conventional static dashboard.
   <br><br>
   <strong>Scoring:</strong>
   <em>SUS</em> uses a 1–5 Likert scale across 10 items; all negative items were pre-reverse-coded, so the formula is
@@ -135,9 +137,7 @@ fetch('results.json')
     renderNASA(data.nasa_tlx);
     renderSatisfaction(data.overall_satisfaction, data.ai_satisfaction);
     renderLD(data.ld_specific);
-    renderComparative(data.comparative);
-    renderQualitative(data.qualitative);
-  })
+    renderComparative(data.comparative);  })
   .catch(err => {
     document.body.innerHTML += `<p style="color:red;margin-top:2rem;">Error loading results.json: ${err.message}. Run analysis.py first.</p>`;
   });
