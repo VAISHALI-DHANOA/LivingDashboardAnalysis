@@ -19,6 +19,12 @@ OUTPUT_PATH = os.path.join(os.path.dirname(__file__), "results.json")
 SYSTEM_A_PARTICIPANTS = {"P1", "P2", "P3", "P10", "P11", "P12"}
 SYSTEM_B_PARTICIPANTS = {"P4", "P5", "P6", "P7", "P8", "P9"}
 
+# Display labels: System A → L1-L6, System B → B1-B6
+PID_RENAME = {
+    "P1": "L1", "P2": "L2", "P3": "L3", "P10": "L4", "P11": "L5", "P12": "L6",
+    "P4": "B1", "P5": "B2", "P6": "B3", "P7": "B4", "P8": "B5", "P9": "B6",
+}
+
 # ── Keyword mappings ──────────────────────────────────────────────────────────
 
 SUS_KEYWORDS = {
@@ -102,6 +108,9 @@ print(f"Loaded {len(df)} participants: {', '.join(df.index)}")
 
 # Assign conditions
 df["condition"] = df.index.map(condition)
+
+# Rename participant IDs for display
+df.index = df.index.map(lambda pid: PID_RENAME.get(pid, pid))
 
 # ── Resolve all columns by keyword ────────────────────────────────────────────
 
