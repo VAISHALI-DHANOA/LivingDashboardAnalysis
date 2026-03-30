@@ -125,7 +125,7 @@
 <!-- LD-Specific -->
 <div class="chart-section">
   <h2>Living Dashboard-Specific Items</h2>
-  <p class="chart-desc">Nine Likert items (1–7) rated only by Living Dashboard participants, capturing perceived quality of adaptive behaviours. Sorted by mean descending. The highest-variance item is highlighted with a dashed border. Error bars show &plusmn;1 SD.</p>
+  <p class="chart-desc">Nine Likert items (1–7) rated only by Living Dashboard participants, capturing perceived quality of adaptive behaviours. Sorted by mean descending. Error bars show &plusmn;1 SD.</p>
   <div class="chart-box">
     <div id="ld-chart"></div>
     <div class="download-bar">
@@ -236,24 +236,24 @@ function renderSUS(sus) {
 
   const annotations = [
     // Group labels above the chart area
-    { x: pidsA[Math.floor(pidsA.length / 2)], y: 1.08, text: '<b>Living Dashboard</b>', showarrow: false, font: { color: COLOR_A, size: 13 }, xref: 'x', yref: 'paper' },
-    { x: xLabels[pidsA.length + 1 + Math.floor(pidsB.length / 2)], y: 1.08, text: '<b>Baseline</b>', showarrow: false, font: { color: COLOR_B, size: 13 }, xref: 'x', yref: 'paper' },
-    // Mean labels — positioned at right end of each group, offset above the line
-    { x: pidsA[0], y: meanA, text: `M = ${meanA}`, showarrow: false, font: { color: COLOR_A, size: 11 }, xanchor: 'right', xshift: -6, yshift: 12 },
-    { x: xLabels[pidsA.length + 1], y: meanB, text: `M = ${meanB}`, showarrow: false, font: { color: COLOR_B, size: 11 }, xanchor: 'right', xshift: -6, yshift: 12 },
-    // Benchmark labels — right edge
-    { x: 1, y: 50, text: 'Poor (50)', showarrow: false, font: { size: 10, color: '#94a3b8' }, xref: 'paper', xanchor: 'right', yshift: 8 },
-    { x: 1, y: 68, text: 'Average (68)', showarrow: false, font: { size: 10, color: '#94a3b8' }, xref: 'paper', xanchor: 'right', yshift: 8 },
-    { x: 1, y: 80, text: 'Good (80)', showarrow: false, font: { size: 10, color: '#94a3b8' }, xref: 'paper', xanchor: 'right', yshift: 8 },
+    { x: pidsA[Math.floor(pidsA.length / 2)], y: 1.06, text: '<b>Living Dashboard</b>', showarrow: false, font: { color: COLOR_A, size: 13 }, xref: 'x', yref: 'paper' },
+    { x: xLabels[pidsA.length + 1 + Math.floor(pidsB.length / 2)], y: 1.06, text: '<b>Baseline</b>', showarrow: false, font: { color: COLOR_B, size: 13 }, xref: 'x', yref: 'paper' },
+    // Mean labels — left gutter, aligned to y-axis area
+    { x: -0.02, y: meanA, text: `M = ${meanA}`, showarrow: false, font: { color: COLOR_A, size: 10 }, xref: 'paper', xanchor: 'right', yshift: 0 },
+    { x: -0.02, y: meanB, text: `M = ${meanB}`, showarrow: false, font: { color: COLOR_B, size: 10 }, xref: 'paper', xanchor: 'right', yshift: 0 },
+    // Benchmark labels — left gutter
+    { x: -0.02, y: 50, text: 'Poor (50)', showarrow: false, font: { size: 9, color: '#94a3b8' }, xref: 'paper', xanchor: 'right', yshift: 0 },
+    { x: -0.02, y: 68, text: 'Avg (68)', showarrow: false, font: { size: 9, color: '#94a3b8' }, xref: 'paper', xanchor: 'right', yshift: 0 },
+    { x: -0.02, y: 80, text: 'Good (80)', showarrow: false, font: { size: 9, color: '#94a3b8' }, xref: 'paper', xanchor: 'right', yshift: 0 },
   ];
 
   Plotly.newPlot('sus-chart', [trace], {
     ...LAYOUT_BASE,
-    yaxis: { title: 'SUS Score', range: [0, 105], gridcolor: '#f1f5f9', gridwidth: 1 },
+    yaxis: { title: '', range: [0, 105], gridcolor: '#f1f5f9', gridwidth: 1, tickvals: [0, 20, 40, 60, 80, 100] },
     xaxis: { title: 'Participant', categoryorder: 'array', categoryarray: xLabels },
     shapes, annotations,
     height: 400,
-    margin: { ...LAYOUT_BASE.margin, t: 50 },
+    margin: { t: 55, b: 60, l: 110, r: 30 },
   }, { responsive: true, displayModeBar: false });
 }
 
@@ -324,26 +324,13 @@ function renderLD(ld) {
   const means = entries.map(e => e[1].mean);
   const sds = entries.map(e => e[1].sd);
 
-  // Highest-variance item gets a darker teal with dashed border pattern
-  const maxSD = Math.max(...sds);
-  const colors = sds.map(sd => sd === maxSD ? '#0f766e' : COLOR_A);
-  const lineWidths = sds.map(sd => sd === maxSD ? 2.5 : 0);
-  const lineColors = sds.map(sd => sd === maxSD ? '#134e4a' : 'rgba(0,0,0,0)');
-  const lineDashes = sds.map(sd => sd === maxSD ? 'dash' : 'solid');
-
   const trace = {
     y: labels, x: means, type: 'bar', orientation: 'h',
-    marker: {
-      color: colors,
-      line: { width: lineWidths, color: lineColors },
-    },
+    marker: { color: COLOR_A },
     error_x: { type: 'data', array: sds, visible: true, color: '#475569', thickness: 1.5 },
     hovertemplate: '%{y}: %{x:.2f} (SD %{error_x.array:.2f})<extra></extra>',
     showlegend: false,
   };
-
-  const highlightIdx = sds.indexOf(maxSD);
-  const highlightName = labels[highlightIdx];
 
   Plotly.newPlot('ld-chart', [trace], {
     ...LAYOUT_BASE,
@@ -351,14 +338,6 @@ function renderLD(ld) {
     yaxis: { automargin: true, tickfont: { size: 11 } },
     margin: { ...LAYOUT_BASE.margin, l: 200 },
     height: 420,
-    annotations: [{
-      x: 8.3,
-      y: highlightName,
-      text: '<b>highest variance</b>',
-      showarrow: true, arrowhead: 2, arrowcolor: '#475569', ax: 30, ay: 0,
-      font: { size: 10, color: '#475569' },
-      xanchor: 'left',
-    }],
   }, { responsive: true, displayModeBar: false });
 }
 
@@ -366,48 +345,52 @@ function renderLD(ld) {
 function renderComparative(comp) {
   const pids = Object.keys(comp.values).sort((a, b) => parseInt(a.slice(1)) - parseInt(b.slice(1)));
   const vals = pids.map(p => comp.values[p]);
+  const xLabels = [...pids, 'Mean'];
+  const yVals = [...vals, comp.mean];
   const scaleLabels = { '-2': 'Much Worse', '-1': 'Worse', '0': 'Same', '1': 'Better', '2': 'Much Better' };
 
   const trace = {
-    x: vals, y: pids, mode: 'markers', type: 'scatter',
+    x: pids, y: vals, mode: 'markers', type: 'scatter',
     marker: { size: 14, color: COLOR_A, symbol: 'circle', line: { width: 2, color: '#0f766e' } },
     text: vals.map(v => scaleLabels[String(v)] || v),
-    hovertemplate: '%{y}: %{text}<extra></extra>',
+    hovertemplate: '%{x}: %{text}<extra></extra>',
     showlegend: false,
   };
 
   const meanTrace = {
-    x: [comp.mean], y: ['Mean'], mode: 'markers', type: 'scatter',
+    x: ['Mean'], y: [comp.mean], mode: 'markers', type: 'scatter',
     marker: { size: 16, color: '#0f766e', symbol: 'diamond', line: { width: 2, color: '#134e4a' } },
-    name: 'Mean',
     showlegend: false,
     hovertemplate: `Mean: ${comp.mean >= 0 ? '+' : ''}${comp.mean.toFixed(2)}<extra></extra>`,
   };
 
   const shapes = [{
-    type: 'line', x0: 0, x1: 0, y0: -0.5, y1: pids.length + 0.5,
-    line: { color: '#94a3b8', width: 2, dash: 'dot' },
+    type: 'line', x0: -0.5, x1: xLabels.length - 0.5, y0: 0, y1: 0,
+    line: { color: '#94a3b8', width: 1.5, dash: 'dot' },
   }];
 
   const annotations = [
-    { x: comp.mean, y: 'Mean', text: `Mean: ${comp.mean >= 0 ? '+' : ''}${comp.mean.toFixed(2)}`,
-      showarrow: false, font: { size: 12, color: '#0f766e' }, xshift: 55 },
+    { x: 'Mean', y: comp.mean, text: `${comp.mean >= 0 ? '+' : ''}${comp.mean.toFixed(2)}`,
+      showarrow: false, font: { size: 11, color: '#0f766e' }, yshift: 16 },
   ];
 
   Plotly.newPlot('comp-chart', [trace, meanTrace], {
     ...LAYOUT_BASE,
-    xaxis: {
-      range: [-2.5, 2.5], dtick: 1, zeroline: false,
+    yaxis: {
+      range: [-2.4, 2.4], zeroline: false,
       showgrid: false,
       tickvals: [-2, -1, 0, 1, 2],
       ticktext: ['Much Worse', 'Worse', 'Same', 'Better', 'Much Better'],
-      tickfont: { size: 12, color: '#1e293b' },
+      tickfont: { size: 11, color: '#1e293b' },
     },
-    yaxis: { automargin: true, showgrid: false, tickfont: { size: 12 } },
+    xaxis: {
+      categoryorder: 'array', categoryarray: xLabels,
+      showgrid: false, tickfont: { size: 12 },
+    },
     shapes, annotations,
     showlegend: false,
-    height: 300,
-    margin: { ...LAYOUT_BASE.margin, b: 50 },
+    height: 260,
+    margin: { t: 30, b: 50, l: 90, r: 30 },
   }, { responsive: true, displayModeBar: false });
 }
 
