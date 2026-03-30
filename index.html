@@ -6,6 +6,7 @@
 <title>Living Dashboard Study — Results Explorer</title>
 <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
   :root {
     --color-a: #0d9488;
@@ -95,27 +96,27 @@
   .kpi-row { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
   .kpi-card {
     flex: 1; background: #f8fafc; border: 1px solid var(--border);
-    border-radius: 8px; padding: 1rem 1.25rem; text-align: center;
+    border-radius: 8px; padding: 0.75rem 1rem; text-align: center;
   }
   .kpi-label {
     font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;
     letter-spacing: 0.5px; margin-bottom: 0.25rem; font-weight: 600;
   }
-  .kpi-value { font-size: 1.75rem; font-weight: 700; }
+  .kpi-value { font-size: 1.5rem; font-weight: 700; }
 
   /* Pre-Q styled table */
   .preq-styled { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
   .preq-styled th {
-    text-align: center; padding: 0.6rem 0.75rem; font-size: 0.72rem; font-weight: 600;
+    text-align: center; padding: 0.4rem 0.75rem; font-size: 0.72rem; font-weight: 600;
     text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted);
     border-bottom: 2px solid var(--border);
   }
   .preq-styled th:first-child { text-align: left; }
-  .preq-styled td { padding: 0.55rem 0.75rem; text-align: center; border-bottom: 1px solid #f1f5f9; }
+  .preq-styled td { padding: 0.35rem 0.75rem; text-align: center; border-bottom: 1px solid #f1f5f9; }
   .preq-styled td:first-child { text-align: left; }
   .preq-styled tr.group-sep td { border-bottom: 2px solid var(--border); }
   .exp-blocks { display: inline-flex; gap: 3px; justify-content: center; align-items: center; }
-  .exp-block { width: 18px; height: 12px; border-radius: 2px; }
+  .exp-block { width: 16px; height: 10px; border-radius: 2px; }
   .preq-legend {
     display: flex; gap: 1.25rem; margin-top: 0.75rem; font-size: 0.72rem;
     color: var(--text-muted); flex-wrap: wrap; align-items: center;
@@ -160,6 +161,10 @@
   <p class="chart-desc">Self-reported experience levels collected before the study session.</p>
   <div class="chart-box">
     <div id="preq-table"></div>
+    <div class="download-bar">
+      <button class="dl-btn" onclick="downloadHTMLPDF('preq-table','PreQuestionnaire','full')">PDF (full)</button>
+      <button class="dl-btn" onclick="downloadHTMLPDF('preq-table','PreQuestionnaire','half')">PDF (half)</button>
+    </div>
   </div>
 </div>
 
@@ -171,6 +176,10 @@
   <p class="chart-desc">Each participant answered 10 data analysis tasks. Cells show outcomes: correct (green), wrong (red), or skipped (gray). The final column shows per-task accuracy (% correct) by condition.</p>
   <div class="chart-box">
     <div id="tasks-table"></div>
+    <div class="download-bar">
+      <button class="dl-btn" onclick="downloadHTMLPDF('tasks-table','Task_Accuracy','full')">PDF (full)</button>
+      <button class="dl-btn" onclick="downloadHTMLPDF('tasks-table','Task_Accuracy','half')">PDF (half)</button>
+    </div>
   </div>
 </div>
 
@@ -252,7 +261,7 @@ const LAYOUT_BASE = {
   margin: { t: 40, b: 60, l: 60, r: 40 },
 };
 
-/* ── PDF Download ────────────────────────────────────────────────── */
+/* ── PDF Download (Plotly charts) ─────────────────────────────────── */
 function downloadPDF(chartId, filename, size) {
   const widthPx  = size === 'full' ? 2400 : 1600;
   const heightEl = document.getElementById(chartId);
@@ -278,6 +287,21 @@ function downloadPDF(chartId, filename, size) {
       doc.save(`${filename}.pdf`);
     };
     img.src = svgDataUrl;
+  });
+}
+
+/* ── PDF Download (HTML elements) ────────────────────────────────── */
+function downloadHTMLPDF(elementId, filename, size) {
+  const el = document.getElementById(elementId);
+  const scale = size === 'full' ? 3 : 2;
+  html2canvas(el, { scale, backgroundColor: '#ffffff', useCORS: true }).then(canvas => {
+    const { jsPDF } = window.jspdf;
+    const pdfW = size === 'full' ? 297 : 190;
+    const aspect = canvas.height / canvas.width;
+    const pdfH = Math.round(pdfW * aspect);
+    const doc = new jsPDF({ orientation: pdfW > pdfH ? 'landscape' : 'portrait', unit: 'mm', format: [pdfW, pdfH] });
+    doc.addImage(canvas.toDataURL('image/png', 1.0), 'PNG', 0, 0, pdfW, pdfH, undefined, 'FAST');
+    doc.save(`${filename}.pdf`);
   });
 }
 
