@@ -9,9 +9,7 @@
 <style>
   :root {
     --color-a: #0d9488;
-    --color-a-light: #5eead4;
     --color-b: #d97706;
-    --color-b-light: #fcd34d;
     --bg: #fafafa;
     --card-bg: #ffffff;
     --text: #1e293b;
@@ -22,14 +20,22 @@
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     background: var(--bg); color: var(--text); line-height: 1.6;
-    max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem;
+    max-width: 900px; margin: 0 auto; padding: 3rem 2rem;
   }
   h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.25rem; }
-  h2 { font-size: 1.25rem; font-weight: 600; margin: 2.5rem 0 0.75rem; border-bottom: 2px solid var(--border); padding-bottom: 0.4rem; }
+  h2 {
+    font-size: 1.3rem; font-weight: 600; margin: 3.5rem 0 0.5rem;
+    border-bottom: 2px solid var(--border); padding-bottom: 0.4rem;
+  }
+  .section-label {
+    font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1.5px; color: var(--text-muted); margin-top: 4rem; margin-bottom: 0.25rem;
+  }
+  .section-label:first-of-type { margin-top: 2rem; }
   .subtitle { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem; }
   .methodology {
     background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px;
-    padding: 1.25rem 1.5rem; margin-bottom: 2rem; font-size: 0.9rem; color: var(--text-muted);
+    padding: 1.25rem 1.5rem; margin-bottom: 2rem; font-size: 0.88rem; color: var(--text-muted);
   }
   .methodology strong { color: var(--text); }
   .legend {
@@ -37,10 +43,10 @@
   }
   .legend-item { display: flex; align-items: center; gap: 0.4rem; }
   .legend-swatch { width: 14px; height: 14px; border-radius: 3px; }
-  .chart-section { margin-bottom: 2.5rem; }
+  .chart-section { margin-bottom: 3rem; }
   .chart-box {
     background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px;
-    padding: 1rem; position: relative;
+    padding: 1.25rem; position: relative;
   }
   .chart-desc {
     font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem; line-height: 1.5;
@@ -49,11 +55,43 @@
     display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 0.5rem;
   }
   .dl-btn {
-    font-size: 0.75rem; padding: 0.3rem 0.7rem; border: 1px solid var(--border);
+    font-size: 0.72rem; padding: 0.25rem 0.6rem; border: 1px solid var(--border);
     border-radius: 4px; background: var(--card-bg); color: var(--text-muted);
     cursor: pointer; transition: all 0.15s;
   }
   .dl-btn:hover { background: #f1f5f9; color: var(--text); }
+
+  /* Heatmap table */
+  .heatmap-table {
+    width: 100%; border-collapse: collapse; font-size: 0.82rem;
+  }
+  .heatmap-table th, .heatmap-table td {
+    padding: 0.45rem 0.5rem; text-align: center; border: 1px solid #e2e8f0;
+  }
+  .heatmap-table th {
+    font-weight: 600; font-size: 0.75rem; background: #f8fafc;
+  }
+  .heatmap-table th.group-a { color: var(--color-a); border-bottom: 2px solid var(--color-a); }
+  .heatmap-table th.group-b { color: var(--color-b); border-bottom: 2px solid var(--color-b); }
+  .heatmap-table td.q-label { text-align: left; font-weight: 500; background: #f8fafc; max-width: 220px; font-size: 0.78rem; }
+  .heatmap-table td.separator { background: #f1f5f9; width: 4px; padding: 0; border: none; }
+  .heatmap-table th.separator { background: #f1f5f9; width: 4px; padding: 0; border: none; }
+
+  /* Task heatmap cells */
+  .cell-correct { background: #d1fae5; color: #065f46; font-weight: 600; }
+  .cell-wrong { background: #fee2e2; color: #991b1b; font-weight: 600; }
+  .cell-skipped { background: #f1f5f9; color: #94a3b8; }
+
+  /* Pre-Q heatmap cells */
+  .cell-expert { background: #d1fae5; color: #065f46; }
+  .cell-intermediate { background: #fef9c3; color: #854d0e; }
+  .cell-beginner { background: #fee2e2; color: #991b1b; }
+  .cell-yes { background: #d1fae5; color: #065f46; }
+  .cell-no { background: #f1f5f9; color: #64748b; }
+  .cell-experienced { background: #d1fae5; color: #065f46; }
+  .cell-not-experienced { background: #fef9c3; color: #854d0e; }
+
+  .summary-row td { font-weight: 700; background: #f8fafc !important; }
 </style>
 </head>
 <body>
@@ -79,19 +117,44 @@
 </div>
 
 <div class="legend">
-  <div class="legend-item"><div class="legend-swatch" style="background:var(--color-a)"></div> Living Dashboard</div>
-  <div class="legend-item"><div class="legend-swatch" style="background:var(--color-b)"></div> Baseline</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:var(--color-a)"></div> Living Dashboard (L1–L6)</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:var(--color-b)"></div> Baseline (B1–B6)</div>
 </div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<p class="section-label">Part 1 — Participant Background</p>
+
+<div class="chart-section">
+  <h2>Pre-Questionnaire</h2>
+  <p class="chart-desc">Self-reported experience levels collected before the study. Columns are grouped by condition.</p>
+  <div class="chart-box">
+    <div id="preq-table"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<p class="section-label">Part 2 — Task Performance</p>
+
+<div class="chart-section">
+  <h2>Task Accuracy</h2>
+  <p class="chart-desc">Each participant answered 10 data analysis tasks. Cells show outcomes: correct (green), wrong (red), or skipped (gray). The final column shows per-task accuracy (% correct) by condition.</p>
+  <div class="chart-box">
+    <div id="tasks-table"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<p class="section-label">Part 3 — Subjective Measures</p>
 
 <!-- SUS -->
 <div class="chart-section">
   <h2>SUS Scores</h2>
-  <p class="chart-desc">System Usability Scale (SUS) score per participant. Each of the 10 items (1–5 Likert) was adjusted by subtracting 1, summed, and multiplied by 2.5 to yield a 0–100 score. All negative items were pre-reverse-coded. Dashed lines show condition means; background bands mark standard SUS benchmarks.</p>
+  <p class="chart-desc">System Usability Scale (SUS) per participant. Each of 10 items (1–5 Likert) adjusted by subtracting 1, summed, then multiplied by 2.5 (range 0–100). Dashed lines show condition means; bands mark standard benchmarks.</p>
   <div class="chart-box">
     <div id="sus-chart"></div>
     <div class="download-bar">
       <button class="dl-btn" onclick="downloadPDF('sus-chart','SUS_Scores','full')">PDF (full)</button>
-      <button class="dl-btn" onclick="downloadPDF('sus-chart','SUS_Scores','half')">PDF (half-page)</button>
+      <button class="dl-btn" onclick="downloadPDF('sus-chart','SUS_Scores','half')">PDF (half)</button>
     </div>
   </div>
 </div>
@@ -99,12 +162,12 @@
 <!-- NASA-TLX -->
 <div class="chart-section">
   <h2>NASA-TLX</h2>
-  <p class="chart-desc">Task workload rated on a 1–7 scale across four NASA-TLX subscales. For Mental Demand, Effort, and Annoyance lower scores are better; for Success higher is better. Error bars show &plusmn;1 SD.</p>
+  <p class="chart-desc">Task workload on a 1–7 scale. For Mental Demand, Effort, and Annoyance lower is better; for Success higher is better. Error bars = &plusmn;1 SD.</p>
   <div class="chart-box">
     <div id="nasa-chart"></div>
     <div class="download-bar">
       <button class="dl-btn" onclick="downloadPDF('nasa-chart','NASA_TLX','full')">PDF (full)</button>
-      <button class="dl-btn" onclick="downloadPDF('nasa-chart','NASA_TLX','half')">PDF (half-page)</button>
+      <button class="dl-btn" onclick="downloadPDF('nasa-chart','NASA_TLX','half')">PDF (half)</button>
     </div>
   </div>
 </div>
@@ -112,12 +175,12 @@
 <!-- Satisfaction -->
 <div class="chart-section">
   <h2>Overall &amp; AI Satisfaction</h2>
-  <p class="chart-desc">Single-item satisfaction ratings on a 1–7 Likert scale. "Overall" measures general dashboard satisfaction; "AI" measures perceived quality of AI-generated suggestions. Error bars show &plusmn;1 SD.</p>
+  <p class="chart-desc">Single-item satisfaction on a 1–7 Likert scale. "Overall" = general dashboard satisfaction; "AI" = perceived quality of AI suggestions. Error bars = &plusmn;1 SD.</p>
   <div class="chart-box">
     <div id="sat-chart"></div>
     <div class="download-bar">
       <button class="dl-btn" onclick="downloadPDF('sat-chart','Satisfaction','full')">PDF (full)</button>
-      <button class="dl-btn" onclick="downloadPDF('sat-chart','Satisfaction','half')">PDF (half-page)</button>
+      <button class="dl-btn" onclick="downloadPDF('sat-chart','Satisfaction','half')">PDF (half)</button>
     </div>
   </div>
 </div>
@@ -125,12 +188,12 @@
 <!-- LD-Specific -->
 <div class="chart-section">
   <h2>Living Dashboard-Specific Items</h2>
-  <p class="chart-desc">Nine Likert items (1–7) rated only by Living Dashboard participants, capturing perceived quality of adaptive behaviours. Sorted by mean descending. Error bars show &plusmn;1 SD.</p>
+  <p class="chart-desc">Nine Likert items (1–7) rated only by Living Dashboard participants, capturing perceived quality of adaptive behaviours. Sorted by mean descending. Error bars = &plusmn;1 SD.</p>
   <div class="chart-box">
     <div id="ld-chart"></div>
     <div class="download-bar">
       <button class="dl-btn" onclick="downloadPDF('ld-chart','LD_Specific','full')">PDF (full)</button>
-      <button class="dl-btn" onclick="downloadPDF('ld-chart','LD_Specific','half')">PDF (half-page)</button>
+      <button class="dl-btn" onclick="downloadPDF('ld-chart','LD_Specific','half')">PDF (half)</button>
     </div>
   </div>
 </div>
@@ -138,12 +201,12 @@
 <!-- Comparative -->
 <div class="chart-section">
   <h2>Comparative Item (Living Dashboard Only)</h2>
-  <p class="chart-desc">Each Living Dashboard participant rated how the adaptive dashboard compared to a conventional static dashboard on a &minus;2 (much worse) to +2 (much better) scale. The diamond shows the group mean.</p>
+  <p class="chart-desc">Each Living Dashboard participant rated how the adaptive dashboard compared to a static dashboard on a &minus;2 (much worse) to +2 (much better) scale. Diamond = group mean.</p>
   <div class="chart-box">
     <div id="comp-chart"></div>
     <div class="download-bar">
       <button class="dl-btn" onclick="downloadPDF('comp-chart','Comparative','full')">PDF (full)</button>
-      <button class="dl-btn" onclick="downloadPDF('comp-chart','Comparative','half')">PDF (half-page)</button>
+      <button class="dl-btn" onclick="downloadPDF('comp-chart','Comparative','half')">PDF (half)</button>
     </div>
   </div>
 </div>
@@ -168,24 +231,19 @@ function downloadPDF(chartId, filename, size) {
   Plotly.toImage(chartId, {
     format: 'svg', width: widthPx, height: heightPx, scale: 3,
   }).then(svgDataUrl => {
-    // Convert SVG data URL to PDF via jsPDF
     const { jsPDF } = window.jspdf;
-    const pdfW = size === 'full' ? 297 : 190;  // mm (A4 landscape width or ~half-page)
+    const pdfW = size === 'full' ? 297 : 190;
     const pdfH = Math.round(pdfW * aspect);
     const doc = new jsPDF({ orientation: pdfW > pdfH ? 'landscape' : 'portrait', unit: 'mm', format: [pdfW, pdfH] });
-
-    // Use the SVG as a high-res PNG via canvas
     const img = new Image();
     img.onload = function() {
       const canvas = document.createElement('canvas');
-      canvas.width = widthPx * 3;
-      canvas.height = heightPx * 3;
+      canvas.width = widthPx * 3; canvas.height = heightPx * 3;
       const ctx = canvas.getContext('2d');
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      const pngData = canvas.toDataURL('image/png', 1.0);
-      doc.addImage(pngData, 'PNG', 0, 0, pdfW, pdfH, undefined, 'FAST');
+      doc.addImage(canvas.toDataURL('image/png', 1.0), 'PNG', 0, 0, pdfW, pdfH, undefined, 'FAST');
       doc.save(`${filename}.pdf`);
     };
     img.src = svgDataUrl;
@@ -195,6 +253,8 @@ function downloadPDF(chartId, filename, size) {
 fetch('results.json')
   .then(r => r.json())
   .then(data => {
+    renderPreQ(data.prequestionnaire);
+    renderTasks(data.task_accuracy);
     renderSUS(data.sus);
     renderNASA(data.nasa_tlx);
     renderSatisfaction(data.overall_satisfaction, data.ai_satisfaction);
@@ -204,6 +264,113 @@ fetch('results.json')
   .catch(err => {
     document.body.innerHTML += `<p style="color:red;margin-top:2rem;">Error loading results.json: ${err.message}. Run analysis.py first.</p>`;
   });
+
+/* ── Pre-Questionnaire Heatmap Table ─────────────────────────────── */
+function renderPreQ(preq) {
+  const pidsA = preq.participants_a;
+  const pidsB = preq.participants_b;
+  const questions = preq.questions;
+
+  function cellClass(val) {
+    const v = val.toLowerCase();
+    if (v === 'expert') return 'cell-expert';
+    if (v === 'intermediate') return 'cell-intermediate';
+    if (v === 'beginner') return 'cell-beginner';
+    if (v === 'yes') return 'cell-yes';
+    if (v === 'no') return 'cell-no';
+    if (v === 'experienced') return 'cell-experienced';
+    if (v.includes('not')) return 'cell-not-experienced';
+    return '';
+  }
+
+  let html = '<table class="heatmap-table"><thead><tr><th></th>';
+  pidsA.forEach(p => html += `<th class="group-a">${p}</th>`);
+  html += '<th class="separator"></th>';
+  pidsB.forEach(p => html += `<th class="group-b">${p}</th>`);
+  html += '</tr></thead><tbody>';
+
+  questions.forEach((q, qi) => {
+    // Shorten question labels
+    const shortLabels = [
+      'Data visualization experience',
+      'Dashboard experience',
+      'Chat interface for vis. usage',
+      'Created dashboards for users'
+    ];
+    html += `<tr><td class="q-label">${shortLabels[qi] || q}</td>`;
+    pidsA.forEach(p => {
+      const val = preq.data[p][qi];
+      html += `<td class="${cellClass(val)}">${val}</td>`;
+    });
+    html += '<td class="separator"></td>';
+    pidsB.forEach(p => {
+      const val = preq.data[p][qi];
+      html += `<td class="${cellClass(val)}">${val}</td>`;
+    });
+    html += '</tr>';
+  });
+
+  html += '</tbody></table>';
+  document.getElementById('preq-table').innerHTML = html;
+}
+
+/* ── Task Accuracy Heatmap Table ─────────────────────────────────── */
+function renderTasks(tasks) {
+  const pidsA = tasks.participants_a;
+  const pidsB = tasks.participants_b;
+  const taskLabels = tasks.tasks;
+  const taskQs = tasks.task_questions;
+  const valueLabels = { 1: '\u2713', 0: '\u2717', '-1': '—' };
+
+  let html = '<table class="heatmap-table"><thead><tr><th></th>';
+  pidsA.forEach(p => html += `<th class="group-a">${p}</th>`);
+  html += '<th class="separator"></th>';
+  pidsB.forEach(p => html += `<th class="group-b">${p}</th>`);
+  html += '<th class="separator"></th><th style="font-size:0.7rem;color:var(--color-a)">LD %</th><th style="font-size:0.7rem;color:var(--color-b)">BL %</th>';
+  html += '</tr></thead><tbody>';
+
+  taskLabels.forEach((t, ti) => {
+    html += `<tr><td class="q-label" title="${taskQs[ti]}">${t}</td>`;
+    pidsA.forEach(p => {
+      const v = tasks.data[p][ti];
+      const cls = v === 1 ? 'cell-correct' : v === 0 ? 'cell-wrong' : 'cell-skipped';
+      html += `<td class="${cls}">${valueLabels[v] || v}</td>`;
+    });
+    html += '<td class="separator"></td>';
+    pidsB.forEach(p => {
+      const v = tasks.data[p][ti];
+      const cls = v === 1 ? 'cell-correct' : v === 0 ? 'cell-wrong' : 'cell-skipped';
+      html += `<td class="${cls}">${valueLabels[v] || v}</td>`;
+    });
+    const accA = tasks.accuracy_per_task[t].A;
+    const accB = tasks.accuracy_per_task[t].B;
+    html += `<td class="separator"></td>`;
+    html += `<td style="font-weight:600;font-size:0.8rem">${accA}%</td>`;
+    html += `<td style="font-weight:600;font-size:0.8rem">${accB}%</td>`;
+    html += '</tr>';
+  });
+
+  // Summary row
+  const overallA = tasks.accuracy_per_condition.A;
+  const overallB = tasks.accuracy_per_condition.B;
+  html += `<tr class="summary-row"><td class="q-label" style="font-weight:700">Overall</td>`;
+  pidsA.forEach(p => {
+    const correct = tasks.data[p].filter(v => v === 1).length;
+    html += `<td>${correct}/10</td>`;
+  });
+  html += '<td class="separator"></td>';
+  pidsB.forEach(p => {
+    const correct = tasks.data[p].filter(v => v === 1).length;
+    html += `<td>${correct}/10</td>`;
+  });
+  html += `<td class="separator"></td>`;
+  html += `<td style="font-weight:700;color:var(--color-a)">${overallA}%</td>`;
+  html += `<td style="font-weight:700;color:var(--color-b)">${overallB}%</td>`;
+  html += '</tr>';
+
+  html += '</tbody></table>';
+  document.getElementById('tasks-table').innerHTML = html;
+}
 
 /* ── SUS ─────────────────────────────────────────────────────────── */
 function renderSUS(sus) {
@@ -235,16 +402,13 @@ function renderSUS(sus) {
   ];
 
   const annotations = [
-    // Group labels above the chart area
     { x: pidsA[Math.floor(pidsA.length / 2)], y: 1.06, text: '<b>Living Dashboard</b>', showarrow: false, font: { color: COLOR_A, size: 13 }, xref: 'x', yref: 'paper' },
     { x: xLabels[pidsA.length + 1 + Math.floor(pidsB.length / 2)], y: 1.06, text: '<b>Baseline</b>', showarrow: false, font: { color: COLOR_B, size: 13 }, xref: 'x', yref: 'paper' },
-    // Mean labels — left gutter, aligned to y-axis area
-    { x: -0.02, y: meanA, text: `M = ${meanA}`, showarrow: false, font: { color: COLOR_A, size: 10 }, xref: 'paper', xanchor: 'right', yshift: 0 },
-    { x: -0.02, y: meanB, text: `M = ${meanB}`, showarrow: false, font: { color: COLOR_B, size: 10 }, xref: 'paper', xanchor: 'right', yshift: 0 },
-    // Benchmark labels — left gutter
-    { x: -0.02, y: 50, text: 'Poor (50)', showarrow: false, font: { size: 9, color: '#94a3b8' }, xref: 'paper', xanchor: 'right', yshift: 0 },
-    { x: -0.02, y: 68, text: 'Avg (68)', showarrow: false, font: { size: 9, color: '#94a3b8' }, xref: 'paper', xanchor: 'right', yshift: 0 },
-    { x: -0.02, y: 80, text: 'Good (80)', showarrow: false, font: { size: 9, color: '#94a3b8' }, xref: 'paper', xanchor: 'right', yshift: 0 },
+    { x: -0.02, y: meanA, text: `M = ${meanA}`, showarrow: false, font: { color: COLOR_A, size: 10 }, xref: 'paper', xanchor: 'right' },
+    { x: -0.02, y: meanB, text: `M = ${meanB}`, showarrow: false, font: { color: COLOR_B, size: 10 }, xref: 'paper', xanchor: 'right' },
+    { x: -0.02, y: 50, text: 'Poor (50)', showarrow: false, font: { size: 9, color: '#94a3b8' }, xref: 'paper', xanchor: 'right' },
+    { x: -0.02, y: 68, text: 'Avg (68)', showarrow: false, font: { size: 9, color: '#94a3b8' }, xref: 'paper', xanchor: 'right' },
+    { x: -0.02, y: 80, text: 'Good (80)', showarrow: false, font: { size: 9, color: '#94a3b8' }, xref: 'paper', xanchor: 'right' },
   ];
 
   Plotly.newPlot('sus-chart', [trace], {
@@ -252,8 +416,8 @@ function renderSUS(sus) {
     yaxis: { title: '', range: [0, 105], gridcolor: '#f1f5f9', gridwidth: 1, tickvals: [0, 20, 40, 60, 80, 100] },
     xaxis: { title: 'Participant', categoryorder: 'array', categoryarray: xLabels },
     shapes, annotations,
-    height: 400,
-    margin: { t: 55, b: 60, l: 110, r: 30 },
+    height: 380,
+    margin: { t: 55, b: 55, l: 110, r: 30 },
   }, { responsive: true, displayModeBar: false });
 }
 
@@ -288,7 +452,7 @@ function renderNASA(nasa) {
     xaxis: { tickfont: { size: 12 } },
     legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center', font: { size: 12 } },
     annotations,
-    height: 380,
+    height: 360,
     margin: { ...LAYOUT_BASE.margin, b: 70 },
   }, { responsive: true, displayModeBar: false });
 }
@@ -313,7 +477,7 @@ function renderSatisfaction(overall, ai) {
     yaxis: { title: 'Rating (1–7)', range: [0, 8], gridcolor: '#f1f5f9', dtick: 1 },
     xaxis: { tickfont: { size: 12 } },
     legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center', font: { size: 12 } },
-    height: 340,
+    height: 320,
   }, { responsive: true, displayModeBar: false });
 }
 
@@ -337,7 +501,7 @@ function renderLD(ld) {
     xaxis: { title: 'Mean Rating (1–7)', range: [0, 8.5], gridcolor: '#f1f5f9', dtick: 1 },
     yaxis: { automargin: true, tickfont: { size: 11 } },
     margin: { ...LAYOUT_BASE.margin, l: 200 },
-    height: 420,
+    height: 400,
   }, { responsive: true, displayModeBar: false });
 }
 
@@ -346,7 +510,6 @@ function renderComparative(comp) {
   const pids = Object.keys(comp.values).sort((a, b) => parseInt(a.slice(1)) - parseInt(b.slice(1)));
   const vals = pids.map(p => comp.values[p]);
   const xLabels = [...pids, 'Mean'];
-  const yVals = [...vals, comp.mean];
   const scaleLabels = { '-2': 'Much Worse', '-1': 'Worse', '0': 'Same', '1': 'Better', '2': 'Much Better' };
 
   const trace = {
@@ -377,27 +540,17 @@ function renderComparative(comp) {
   Plotly.newPlot('comp-chart', [trace, meanTrace], {
     ...LAYOUT_BASE,
     yaxis: {
-      range: [-2.4, 2.4], zeroline: false,
-      showgrid: false,
+      range: [-2.4, 2.4], zeroline: false, showgrid: false,
       tickvals: [-2, -1, 0, 1, 2],
       ticktext: ['Much Worse', 'Worse', 'Same', 'Better', 'Much Better'],
       tickfont: { size: 11, color: '#1e293b' },
     },
-    xaxis: {
-      categoryorder: 'array', categoryarray: xLabels,
-      showgrid: false, tickfont: { size: 12 },
-    },
+    xaxis: { categoryorder: 'array', categoryarray: xLabels, showgrid: false, tickfont: { size: 12 } },
     shapes, annotations,
     showlegend: false,
     height: 260,
     margin: { t: 30, b: 50, l: 90, r: 30 },
   }, { responsive: true, displayModeBar: false });
-}
-
-function escapeHtml(str) {
-  const div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
 }
 </script>
 

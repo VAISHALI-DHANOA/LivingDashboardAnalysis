@@ -1,4 +1,336 @@
 {
+  "prequestionnaire": {
+    "questions": [
+      "How experienced are they with data visualizations?",
+      "How experienced are they with dashboards?",
+      "How often do they use chat interfaces for visualizations?",
+      "Have they created dashboards for users?"
+    ],
+    "participants_a": [
+      "L1",
+      "L2",
+      "L3",
+      "L4",
+      "L5",
+      "L6"
+    ],
+    "participants_b": [
+      "B1",
+      "B2",
+      "B3",
+      "B4",
+      "B5",
+      "B6"
+    ],
+    "data": {
+      "B4": [
+        "Intermediate",
+        "Beginner",
+        "Experienced",
+        "No"
+      ],
+      "B5": [
+        "Intermediate",
+        "Intermediate",
+        "Experienced",
+        "Yes"
+      ],
+      "B6": [
+        "Expert",
+        "Intermediate",
+        "Experienced",
+        "Yes"
+      ],
+      "L4": [
+        "Expert",
+        "Expert",
+        "Experienced",
+        "Yes"
+      ],
+      "L5": [
+        "Intermediate",
+        "Intermediate",
+        "Experienced",
+        "Yes"
+      ],
+      "L6": [
+        "Expert",
+        "Expert",
+        "Experienced",
+        "Yes"
+      ],
+      "L1": [
+        "Intermediate",
+        "Intermediate",
+        "Not so Experienced",
+        "Yes"
+      ],
+      "L2": [
+        "Intermediate",
+        "Beginner",
+        "Experienced",
+        "No"
+      ],
+      "L3": [
+        "Beginner",
+        "Beginner",
+        "Not so experienced",
+        "No"
+      ],
+      "B1": [
+        "Beginner",
+        "Intermediate",
+        "Experienced",
+        "Yes"
+      ],
+      "B2": [
+        "Intermediate",
+        "Beginner",
+        "Experienced",
+        "No"
+      ],
+      "B3": [
+        "Beginner",
+        "Beginner",
+        "Not so experienced",
+        "No"
+      ]
+    }
+  },
+  "task_accuracy": {
+    "tasks": [
+      "T1",
+      "T2",
+      "T3",
+      "T4",
+      "T5",
+      "T6",
+      "T7",
+      "T8",
+      "T9",
+      "T10"
+    ],
+    "participants_a": [
+      "L1",
+      "L2",
+      "L3",
+      "L4",
+      "L5",
+      "L6"
+    ],
+    "participants_b": [
+      "B1",
+      "B2",
+      "B3",
+      "B4",
+      "B5",
+      "B6"
+    ],
+    "data": {
+      "L1": [
+        0,
+        1,
+        1,
+        -1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1
+      ],
+      "L2": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1
+      ],
+      "L3": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "L4": [
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "L5": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "L6": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "B1": [
+        0,
+        1,
+        1,
+        1,
+        1,
+        -1,
+        -1,
+        -1,
+        0,
+        1
+      ],
+      "B2": [
+        1,
+        1,
+        1,
+        -1,
+        -1,
+        -1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "B3": [
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1
+      ],
+      "B4": [
+        1,
+        1,
+        1,
+        1,
+        0,
+        -1,
+        0,
+        1,
+        0,
+        1
+      ],
+      "B5": [
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1
+      ],
+      "B6": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    "accuracy_per_task": {
+      "T1": {
+        "A": 83.3,
+        "B": 83.3
+      },
+      "T2": {
+        "A": 83.3,
+        "B": 100.0
+      },
+      "T3": {
+        "A": 100.0,
+        "B": 83.3
+      },
+      "T4": {
+        "A": 83.3,
+        "B": 83.3
+      },
+      "T5": {
+        "A": 100.0,
+        "B": 50.0
+      },
+      "T6": {
+        "A": 83.3,
+        "B": 33.3
+      },
+      "T7": {
+        "A": 83.3,
+        "B": 33.3
+      },
+      "T8": {
+        "A": 100.0,
+        "B": 83.3
+      },
+      "T9": {
+        "A": 100.0,
+        "B": 66.7
+      },
+      "T10": {
+        "A": 100.0,
+        "B": 100.0
+      }
+    },
+    "accuracy_per_condition": {
+      "A": 91.7,
+      "B": 71.7
+    },
+    "task_questions": [
+      "How much revenue is won by the Devices category?",
+      "List the revenue generated for each product category?",
+      "How many units were lost in the negotiation stage?",
+      "Which regions have the most mature markets?",
+      "Which campaign led to the most wins for the Manufacturing domain?",
+      "Which campaign was the first one to start in July 2025?",
+      "What was the revenue goal at the Proposal stage in the North America territory?",
+      "What are the subcategories in the Service category?",
+      "Which two industries lead to the most revenue won in Germany and Denmark?",
+      "In which time period did Australia's performance peak?"
+    ]
+  },
   "sus": {
     "participants": {
       "B1": {

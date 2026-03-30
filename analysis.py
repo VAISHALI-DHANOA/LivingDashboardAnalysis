@@ -13,7 +13,10 @@ import os
 
 # ── Configuration ──────────────────────────────────────────────────────────────
 
-CSV_PATH = os.path.join(os.path.dirname(__file__), "data", "Numerical_Transposed_LimeSurvey.csv")
+DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
+CSV_PATH = os.path.join(DATA_DIR, "Numerical_Transposed_LimeSurvey.csv")
+PREQ_PATH = os.path.join(DATA_DIR, "Prequestionnaire.csv")
+TASKS_PATH = os.path.join(DATA_DIR, "Analysis_Combined - Tasks_AB.csv")
 OUTPUT_PATH = os.path.join(os.path.dirname(__file__), "results.json")
 
 SYSTEM_A_PARTICIPANTS = {"P1", "P2", "P3", "P10", "P11", "P12"}
@@ -215,9 +218,103 @@ for pid in df.index:
         "ld_comments": str(df.loc[pid, qual_cols[2]]) if pd.notna(df.loc[pid, qual_cols[2]]) else "",
     }
 
+# ── Pre-Questionnaire ─────────────────────────────────────────────────────────
+
+preq_df = pd.read_csv(PREQ_PATH)
+preq_df.columns = [c.strip() for c in preq_df.columns]
+q_col = preq_df.columns[0]  # "Questions"
+pid_cols_preq = [c for c in preq_df.columns if c != q_col]
+
+preq_output = {
+    "questions": list(preq_df[q_col]),
+    "participants_a": [],
+    "participants_b": [],
+    "data": {},
+}
+
+for pid_raw in pid_cols_preq:
+    pid_display = PID_RENAME.get(pid_raw.strip(), pid_raw.strip())
+    cond = condition(pid_raw.strip())
+    if cond == "A":
+        preq_output["participants_a"].append(pid_display)
+    else:
+        preq_output["participants_b"].append(pid_display)
+    preq_output["data"][pid_display] = list(preq_df[pid_raw].astype(str).str.strip())
+
+# Sort within each group
+preq_output["participants_a"].sort(key=lambda x: int(x[1:]))
+preq_output["participants_b"].sort(key=lambda x: int(x[1:]))
+
+print("\n── Pre-Questionnaire ───────────────────────────────────────────────")
+for q in preq_output["questions"]:
+    print(f"  {q}")
+
+# ── Task Accuracy ─────────────────────────────────────────────────────────────
+
+tasks_df = pd.read_csv(TASKS_PATH)
+tasks_df.columns = [c.strip() for c in tasks_df.columns]
+nr_col = tasks_df.columns[0]
+q_col_t = tasks_df.columns[1]
+pid_cols_tasks = [c for c in tasks_df.columns if c not in [nr_col, q_col_t]]
+
+tasks_output = {
+    "tasks": [],
+    "participants_a": [],
+    "participants_b": [],
+    "data": {},
+    "accuracy_per_task": {},
+    "accuracy_per_condition": {},
+}
+
+for _, row in tasks_df.iterrows():
+    tasks_output["tasks"].append(f"T{int(row[nr_col])}")
+
+for pid_raw in pid_cols_tasks:
+    pid_display = PID_RENAME.get(pid_raw.strip(), pid_raw.strip())
+    cond = condition(pid_raw.strip())
+    if cond == "A":
+        tasks_output["participants_a"].append(pid_display)
+    else:
+        tasks_output["participants_b"].append(pid_display)
+    tasks_output["data"][pid_display] = [int(v) for v in tasks_df[pid_raw]]
+
+tasks_output["participants_a"].sort(key=lambda x: int(x[1:]))
+tasks_output["participants_b"].sort(key=lambda x: int(x[1:]))
+
+# Accuracy per task per condition
+for i, task_label in enumerate(tasks_output["tasks"]):
+    correct_a = sum(1 for p in tasks_output["participants_a"] if tasks_output["data"][p][i] == 1)
+    correct_b = sum(1 for p in tasks_output["participants_b"] if tasks_output["data"][p][i] == 1)
+    n_a = len(tasks_output["participants_a"])
+    n_b = len(tasks_output["participants_b"])
+    tasks_output["accuracy_per_task"][task_label] = {
+        "A": round(correct_a / n_a * 100, 1),
+        "B": round(correct_b / n_b * 100, 1),
+    }
+
+# Overall accuracy per condition
+for cond, pids in [("A", tasks_output["participants_a"]), ("B", tasks_output["participants_b"])]:
+    total = 0
+    correct = 0
+    for p in pids:
+        for v in tasks_output["data"][p]:
+            total += 1
+            if v == 1:
+                correct += 1
+    tasks_output["accuracy_per_condition"][cond] = round(correct / total * 100, 1)
+
+# Store task questions for hover
+tasks_output["task_questions"] = list(tasks_df[q_col_t])
+
+print("\n── Task Accuracy ───────────────────────────────────────────────────")
+print(f"  Living Dashboard overall: {tasks_output['accuracy_per_condition']['A']}%")
+print(f"  Baseline overall: {tasks_output['accuracy_per_condition']['B']}%")
+
 # ── Export to JSON ─────────────────────────────────────────────────────────────
 
 results = {
+    "prequestionnaire": preq_output,
+    "task_accuracy": tasks_output,
     "sus": sus_output,
     "nasa_tlx": nasa_output,
     "overall_satisfaction": satisfaction_output,
