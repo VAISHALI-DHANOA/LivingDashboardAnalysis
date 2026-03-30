@@ -105,7 +105,9 @@
   .kpi-value { font-size: 1.5rem; font-weight: 700; }
 
   /* Pre-Q styled table */
-  .preq-styled { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  .preq-styled { width: 100%; border-collapse: collapse; font-size: 0.85rem; table-layout: fixed; }
+  .preq-styled th:first-child, .preq-styled td:first-child { width: 8%; }
+  .preq-styled th:not(:first-child), .preq-styled td:not(:first-child) { width: 23%; }
   .preq-styled th {
     text-align: center; padding: 0.4rem 0.75rem; font-size: 0.72rem; font-weight: 600;
     text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted);
@@ -189,7 +191,7 @@
 <!-- SUS -->
 <div class="chart-section">
   <h2>SUS Scores</h2>
-  <p class="chart-desc">System Usability Scale (SUS) per participant. Each of 10 items (1–5 Likert) adjusted by subtracting 1, summed, then multiplied by 2.5 (range 0–100). Dashed lines show condition means; bands mark standard benchmarks.</p>
+  <p class="chart-desc">System Usability Scale (SUS) per participant. Each of 10 items (1–5 Likert) adjusted by subtracting 1, summed, then multiplied by 2.5 (range 0–100). Dashed lines show condition means. Benchmark bands: <span style="color:#ef4444">Poor (&lt;50)</span>, <span style="color:#ca8a04">Average (50–68)</span>, <span style="color:#16a34a">Good (68–80)</span>, <span style="color:#059669">Excellent (&gt;80)</span>.</p>
   <div class="chart-box">
     <div id="sus-chart"></div>
     <div class="download-bar">
@@ -335,13 +337,13 @@ function renderPreQ(preq) {
   // KPI cards
   let html = '<div class="kpi-row">';
   html += `<div class="kpi-card"><div class="kpi-label">Total Participants</div><div class="kpi-value">${total}</div></div>`;
-  html += `<div class="kpi-card"><div class="kpi-label" style="color:var(--color-a)">L Group (Living Dashboard)</div><div class="kpi-value" style="color:var(--color-a)">${pidsA.length}</div></div>`;
-  html += `<div class="kpi-card"><div class="kpi-label" style="color:var(--color-b)">B Group (Baseline)</div><div class="kpi-value" style="color:var(--color-b)">${pidsB.length}</div></div>`;
+  html += `<div class="kpi-card"><div class="kpi-label" style="color:var(--color-a)">Living Dashboard Participants</div><div class="kpi-value" style="color:var(--color-a)">${pidsA.length}</div></div>`;
+  html += `<div class="kpi-card"><div class="kpi-label" style="color:var(--color-b)">Baseline Participants</div><div class="kpi-value" style="color:var(--color-b)">${pidsB.length}</div></div>`;
   html += '</div>';
 
   // Table
   html += '<table class="preq-styled"><thead><tr>';
-  html += '<th>ID</th><th>Data Viz</th><th>Dashboard</th><th>Chat Interface</th><th>Created</th>';
+  html += '<th>ID</th><th>Data Viz</th><th>Dashboard</th><th>AI for Viz</th><th>Authored Dashboards</th>';
   html += '</tr></thead><tbody>';
 
   function addRow(pid, data, color, isLastInGroup) {
@@ -351,7 +353,7 @@ function renderPreQ(preq) {
     html += `<td title="${data[1]}">${renderBlocks(expLevel(data[1]), 3, color)}</td>`;
     html += `<td title="${data[2]}">${renderBlocks(chatLevel(data[2]), 2, color)}</td>`;
     html += `<td>${data[3] === 'Yes'
-      ? `<span style="color:${color};font-weight:600">&#10003;</span>`
+      ? `<span style="color:${color};font-weight:600;font-size:1.3rem">&#10003;</span>`
       : '<span style="color:#cbd5e1">—</span>'}</td>`;
     html += '</tr>';
   }
@@ -472,20 +474,17 @@ function renderSUS(sus) {
   const annotations = [
     { x: pidsA[Math.floor(pidsA.length / 2)], y: 1.06, text: '<b>Living Dashboard</b>', showarrow: false, font: { color: COLOR_A, size: 13 }, xref: 'x', yref: 'paper' },
     { x: xLabels[pidsA.length + 1 + Math.floor(pidsB.length / 2)], y: 1.06, text: '<b>Baseline</b>', showarrow: false, font: { color: COLOR_B, size: 13 }, xref: 'x', yref: 'paper' },
-    { x: -0.02, y: meanA, text: `M = ${meanA}`, showarrow: false, font: { color: COLOR_A, size: 10 }, xref: 'paper', xanchor: 'right' },
-    { x: -0.02, y: meanB, text: `M = ${meanB}`, showarrow: false, font: { color: COLOR_B, size: 10 }, xref: 'paper', xanchor: 'right' },
-    { x: -0.02, y: 50, text: 'Poor (50)', showarrow: false, font: { size: 9, color: '#94a3b8' }, xref: 'paper', xanchor: 'right' },
-    { x: -0.02, y: 68, text: 'Avg (68)', showarrow: false, font: { size: 9, color: '#94a3b8' }, xref: 'paper', xanchor: 'right' },
-    { x: -0.02, y: 80, text: 'Good (80)', showarrow: false, font: { size: 9, color: '#94a3b8' }, xref: 'paper', xanchor: 'right' },
+    { x: pidsA[Math.floor(pidsA.length / 2)], y: meanA + 3, text: `M = ${meanA}`, showarrow: false, font: { color: COLOR_A, size: 11, weight: 600 }, xref: 'x' },
+    { x: xLabels[pidsA.length + 1 + Math.floor(pidsB.length / 2)], y: meanB + 3, text: `M = ${meanB}`, showarrow: false, font: { color: COLOR_B, size: 11, weight: 600 }, xref: 'x' },
   ];
 
   Plotly.newPlot('sus-chart', [trace], {
     ...LAYOUT_BASE,
     yaxis: { title: '', range: [0, 105], gridcolor: '#f1f5f9', gridwidth: 1, tickvals: [0, 20, 40, 60, 80, 100] },
-    xaxis: { title: 'Participant', categoryorder: 'array', categoryarray: xLabels },
+    xaxis: { title: 'Participants', categoryorder: 'array', categoryarray: xLabels },
     shapes, annotations,
     height: 380,
-    margin: { t: 55, b: 55, l: 110, r: 30 },
+    margin: { t: 55, b: 55, l: 50, r: 30 },
   }, { responsive: true, displayModeBar: false });
 }
 
@@ -577,13 +576,13 @@ function renderLD(ld) {
   }];
 
   const annotations = [{
-    x: 4, y: 1.02, text: 'Neutral (4)', showarrow: false,
-    font: { size: 10, color: '#94a3b8' }, xref: 'x', yref: 'paper',
+    x: 4, y: 1.1, text: 'Neutral (4)', showarrow: false,
+    font: { size: 12, color: '#969696' }, xref: 'x', yref: 'paper',
   }];
 
   Plotly.newPlot('ld-chart', [barTrace, dotTrace], {
     ...LAYOUT_BASE,
-    xaxis: { title: 'Mean Rating (1–7)', range: [0, 7.5], gridcolor: '#f1f5f9', dtick: 1 },
+    xaxis: { title: { text: 'Mean Rating (1 = Strongly Disagree → 7 = Strongly Agree)', standoff: 15 }, range: [1, 7.5], gridcolor: '#f1f5f9', dtick: 1, tick0: 1 },
     yaxis: { automargin: true, tickfont: { size: 11 } },
     shapes, annotations,
     margin: { ...LAYOUT_BASE.margin, l: 250 },
