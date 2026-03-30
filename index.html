@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Living Dashboard Study — Results Explorer</title>
 <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
   :root {
     --color-a: #0d9488;
@@ -25,7 +26,6 @@
   }
   h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.25rem; }
   h2 { font-size: 1.25rem; font-weight: 600; margin: 2.5rem 0 0.75rem; border-bottom: 2px solid var(--border); padding-bottom: 0.4rem; }
-  h3 { font-size: 1rem; font-weight: 600; margin: 1.5rem 0 0.5rem; }
   .subtitle { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem; }
   .methodology {
     background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px;
@@ -37,50 +37,38 @@
   }
   .legend-item { display: flex; align-items: center; gap: 0.4rem; }
   .legend-swatch { width: 14px; height: 14px; border-radius: 3px; }
+  .chart-section { margin-bottom: 2.5rem; }
   .chart-box {
     background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px;
-    padding: 1rem; margin-bottom: 1.5rem;
+    padding: 1rem; position: relative;
   }
-  .chart-note { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem; }
-
-  /* Qualitative cards */
-  .qual-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
-  .qual-card {
-    background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px;
-    padding: 1.25rem; position: relative;
+  .chart-desc {
+    font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem; line-height: 1.5;
   }
-  .qual-card.cond-a { border-left: 4px solid var(--color-a); }
-  .qual-card.cond-b { border-left: 4px solid var(--color-b); }
-  .qual-header {
-    display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;
+  .download-bar {
+    display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 0.5rem;
   }
-  .qual-pid { font-weight: 700; font-size: 1rem; }
-  .qual-badge {
-    font-size: 0.7rem; font-weight: 600; padding: 0.15rem 0.5rem; border-radius: 10px;
-    color: white;
+  .dl-btn {
+    font-size: 0.75rem; padding: 0.3rem 0.7rem; border: 1px solid var(--border);
+    border-radius: 4px; background: var(--card-bg); color: var(--text-muted);
+    cursor: pointer; transition: all 0.15s;
   }
-  .badge-a { background: var(--color-a); }
-  .badge-b { background: var(--color-b); }
-  .qual-section { margin-bottom: 0.75rem; }
-  .qual-section:last-child { margin-bottom: 0; }
-  .qual-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 0.2rem; }
-  .qual-text { font-size: 0.88rem; }
-  .qual-text.empty { color: #cbd5e1; font-style: italic; }
+  .dl-btn:hover { background: #f1f5f9; color: var(--text); }
 </style>
 </head>
 <body>
 
 <h1>Living Dashboard Study — Results Explorer</h1>
-<p class="subtitle">HCI study comparing an AI-driven Living Dashboard (System A) with a static Baseline (System B)</p>
+<p class="subtitle">HCI study comparing an AI-driven Living Dashboard with a static Baseline dashboard</p>
 
 <div class="methodology">
   <strong>Study Design &amp; Methodology.</strong>
   This between-subjects study compared two dashboard conditions with 12 participants (6 per condition).
   <br>
-  <strong>System A (Living Dashboard)</strong> — participants L1 - L6 — featured an AI-driven interface that
+  <strong>Living Dashboard</strong> — participants L1–L6 — featured an AI-driven interface that
   automatically resized, dimmed, and rearranged views based on user activity.
   <br>
-  <strong>System B (Baseline)</strong> — participants B1 - B6 — provided a conventional static dashboard.
+  <strong>Baseline</strong> — participants B1–B6 — provided a conventional static dashboard.
   <br><br>
   <strong>Scoring:</strong>
   <em>SUS</em> uses a 1–5 Likert scale across 10 items; all negative items were pre-reverse-coded, so the formula is
@@ -91,44 +79,118 @@
 </div>
 
 <div class="legend">
-  <div class="legend-item"><div class="legend-swatch" style="background:var(--color-a)"></div> System A (Living Dashboard)</div>
-  <div class="legend-item"><div class="legend-swatch" style="background:var(--color-b)"></div> System B (Baseline)</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:var(--color-a)"></div> Living Dashboard</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:var(--color-b)"></div> Baseline</div>
 </div>
 
-<!-- Charts -->
-<h2>SUS Scores</h2>
-<div class="chart-box"><div id="sus-chart"></div></div>
-<p class="chart-note">Horizontal lines show condition means. Benchmark bands: 50 = poor, 68 = average, 80 = good.</p>
+<!-- SUS -->
+<div class="chart-section">
+  <h2>SUS Scores</h2>
+  <p class="chart-desc">System Usability Scale (SUS) score per participant. Each of the 10 items (1–5 Likert) was adjusted by subtracting 1, summed, and multiplied by 2.5 to yield a 0–100 score. All negative items were pre-reverse-coded. Dashed lines show condition means; background bands mark standard SUS benchmarks.</p>
+  <div class="chart-box">
+    <div id="sus-chart"></div>
+    <div class="download-bar">
+      <button class="dl-btn" onclick="downloadPDF('sus-chart','SUS_Scores','full')">PDF (full)</button>
+      <button class="dl-btn" onclick="downloadPDF('sus-chart','SUS_Scores','half')">PDF (half-page)</button>
+    </div>
+  </div>
+</div>
 
-<h2>NASA-TLX</h2>
-<div class="chart-box"><div id="nasa-chart"></div></div>
-<p class="chart-note">For Mental Demand, Effort, and Annoyance lower is better. For Success higher is better. Error bars show &plusmn;1 SD.</p>
+<!-- NASA-TLX -->
+<div class="chart-section">
+  <h2>NASA-TLX</h2>
+  <p class="chart-desc">Task workload rated on a 1–7 scale across four NASA-TLX subscales. For Mental Demand, Effort, and Annoyance lower scores are better; for Success higher is better. Error bars show &plusmn;1 SD.</p>
+  <div class="chart-box">
+    <div id="nasa-chart"></div>
+    <div class="download-bar">
+      <button class="dl-btn" onclick="downloadPDF('nasa-chart','NASA_TLX','full')">PDF (full)</button>
+      <button class="dl-btn" onclick="downloadPDF('nasa-chart','NASA_TLX','half')">PDF (half-page)</button>
+    </div>
+  </div>
+</div>
 
-<h2>Overall &amp; AI Satisfaction</h2>
-<div class="chart-box"><div id="sat-chart"></div></div>
+<!-- Satisfaction -->
+<div class="chart-section">
+  <h2>Overall &amp; AI Satisfaction</h2>
+  <p class="chart-desc">Single-item satisfaction ratings on a 1–7 Likert scale. "Overall" measures general dashboard satisfaction; "AI" measures perceived quality of AI-generated suggestions. Error bars show &plusmn;1 SD.</p>
+  <div class="chart-box">
+    <div id="sat-chart"></div>
+    <div class="download-bar">
+      <button class="dl-btn" onclick="downloadPDF('sat-chart','Satisfaction','full')">PDF (full)</button>
+      <button class="dl-btn" onclick="downloadPDF('sat-chart','Satisfaction','half')">PDF (half-page)</button>
+    </div>
+  </div>
+</div>
 
-<h2>LD-Specific Items (System A Only)</h2>
-<div class="chart-box"><div id="ld-chart"></div></div>
-<p class="chart-note">Sorted by mean descending. The highest-variance item is highlighted. Error bars show &plusmn;1 SD.</p>
+<!-- LD-Specific -->
+<div class="chart-section">
+  <h2>Living Dashboard-Specific Items</h2>
+  <p class="chart-desc">Nine Likert items (1–7) rated only by Living Dashboard participants, capturing perceived quality of adaptive behaviours. Sorted by mean descending. The highest-variance item is highlighted with a dashed border. Error bars show &plusmn;1 SD.</p>
+  <div class="chart-box">
+    <div id="ld-chart"></div>
+    <div class="download-bar">
+      <button class="dl-btn" onclick="downloadPDF('ld-chart','LD_Specific','full')">PDF (full)</button>
+      <button class="dl-btn" onclick="downloadPDF('ld-chart','LD_Specific','half')">PDF (half-page)</button>
+    </div>
+  </div>
+</div>
 
-<h2>Comparative Item (System A Only)</h2>
-<div class="chart-box"><div id="comp-chart"></div></div>
-<p class="chart-note">Each dot is one System A participant's rating of the Living Dashboard compared to a static dashboard.</p>
-
-<h2>Qualitative Feedback</h2>
-<div id="qual-container" class="qual-grid"></div>
+<!-- Comparative -->
+<div class="chart-section">
+  <h2>Comparative Item (Living Dashboard Only)</h2>
+  <p class="chart-desc">Each Living Dashboard participant rated how the adaptive dashboard compared to a conventional static dashboard on a &minus;2 (much worse) to +2 (much better) scale. The diamond shows the group mean.</p>
+  <div class="chart-box">
+    <div id="comp-chart"></div>
+    <div class="download-bar">
+      <button class="dl-btn" onclick="downloadPDF('comp-chart','Comparative','full')">PDF (full)</button>
+      <button class="dl-btn" onclick="downloadPDF('comp-chart','Comparative','half')">PDF (half-page)</button>
+    </div>
+  </div>
+</div>
 
 <script>
 const COLOR_A = '#0d9488';
 const COLOR_B = '#d97706';
-const COLOR_A_LIGHT = '#5eead4';
-const COLOR_B_LIGHT = '#fcd34d';
 const LAYOUT_BASE = {
-  font: { family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif', size: 13 },
-  paper_bgcolor: 'rgba(0,0,0,0)',
-  plot_bgcolor: 'rgba(0,0,0,0)',
-  margin: { t: 30, b: 50, l: 60, r: 30 },
+  font: { family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif', size: 13, color: '#1e293b' },
+  paper_bgcolor: '#ffffff',
+  plot_bgcolor: '#ffffff',
+  margin: { t: 40, b: 60, l: 60, r: 40 },
 };
+
+/* ── PDF Download ────────────────────────────────────────────────── */
+function downloadPDF(chartId, filename, size) {
+  const widthPx  = size === 'full' ? 2400 : 1600;
+  const heightEl = document.getElementById(chartId);
+  const aspect   = heightEl.offsetHeight / heightEl.offsetWidth;
+  const heightPx = Math.round(widthPx * aspect);
+
+  Plotly.toImage(chartId, {
+    format: 'svg', width: widthPx, height: heightPx, scale: 3,
+  }).then(svgDataUrl => {
+    // Convert SVG data URL to PDF via jsPDF
+    const { jsPDF } = window.jspdf;
+    const pdfW = size === 'full' ? 297 : 190;  // mm (A4 landscape width or ~half-page)
+    const pdfH = Math.round(pdfW * aspect);
+    const doc = new jsPDF({ orientation: pdfW > pdfH ? 'landscape' : 'portrait', unit: 'mm', format: [pdfW, pdfH] });
+
+    // Use the SVG as a high-res PNG via canvas
+    const img = new Image();
+    img.onload = function() {
+      const canvas = document.createElement('canvas');
+      canvas.width = widthPx * 3;
+      canvas.height = heightPx * 3;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      const pngData = canvas.toDataURL('image/png', 1.0);
+      doc.addImage(pngData, 'PNG', 0, 0, pdfW, pdfH, undefined, 'FAST');
+      doc.save(`${filename}.pdf`);
+    };
+    img.src = svgDataUrl;
+  });
+}
 
 fetch('results.json')
   .then(r => r.json())
@@ -137,27 +199,26 @@ fetch('results.json')
     renderNASA(data.nasa_tlx);
     renderSatisfaction(data.overall_satisfaction, data.ai_satisfaction);
     renderLD(data.ld_specific);
-    renderComparative(data.comparative);  })
+    renderComparative(data.comparative);
+  })
   .catch(err => {
     document.body.innerHTML += `<p style="color:red;margin-top:2rem;">Error loading results.json: ${err.message}. Run analysis.py first.</p>`;
   });
 
 /* ── SUS ─────────────────────────────────────────────────────────── */
 function renderSUS(sus) {
-  // Group by condition: System A (L*) on the left, gap, System B (B*) on the right
   const allPids = Object.keys(sus.participants);
   const pidsA = allPids.filter(p => sus.participants[p].condition === 'A').sort((a, b) => parseInt(a.slice(1)) - parseInt(b.slice(1)));
   const pidsB = allPids.filter(p => sus.participants[p].condition === 'B').sort((a, b) => parseInt(a.slice(1)) - parseInt(b.slice(1)));
-  const xLabels = [...pidsA, '', ...pidsB];  // empty string creates visual gap
+  const xLabels = [...pidsA, '', ...pidsB];
   const scores  = [...pidsA.map(p => sus.participants[p].score), null, ...pidsB.map(p => sus.participants[p].score)];
   const colors  = [...pidsA.map(() => COLOR_A), 'rgba(0,0,0,0)', ...pidsB.map(() => COLOR_B)];
 
   const trace = {
     x: xLabels, y: scores, type: 'bar',
     marker: { color: colors },
-    text: scores.map(s => s !== null ? s.toFixed(0) : ''),
-    textposition: 'outside',
     hovertemplate: '%{x}: %{y:.1f}<extra></extra>',
+    showlegend: false,
   };
 
   const meanA = sus.condition_stats.A.mean;
@@ -165,35 +226,34 @@ function renderSUS(sus) {
   const n = xLabels.length;
 
   const shapes = [
-    // Benchmark bands
-    { type: 'rect', x0: -0.5, x1: n - 0.5, y0: 0, y1: 50, fillcolor: '#fee2e2', opacity: 0.25, line: { width: 0 }, layer: 'below' },
-    { type: 'rect', x0: -0.5, x1: n - 0.5, y0: 50, y1: 68, fillcolor: '#fef9c3', opacity: 0.25, line: { width: 0 }, layer: 'below' },
-    { type: 'rect', x0: -0.5, x1: n - 0.5, y0: 68, y1: 80, fillcolor: '#dcfce7', opacity: 0.2, line: { width: 0 }, layer: 'below' },
-    { type: 'rect', x0: -0.5, x1: n - 0.5, y0: 80, y1: 100, fillcolor: '#d1fae5', opacity: 0.25, line: { width: 0 }, layer: 'below' },
-    // Mean lines — scoped to each condition's region
+    { type: 'rect', x0: -0.5, x1: n - 0.5, y0: 0, y1: 50, fillcolor: '#fee2e2', opacity: 0.2, line: { width: 0 }, layer: 'below' },
+    { type: 'rect', x0: -0.5, x1: n - 0.5, y0: 50, y1: 68, fillcolor: '#fef9c3', opacity: 0.2, line: { width: 0 }, layer: 'below' },
+    { type: 'rect', x0: -0.5, x1: n - 0.5, y0: 68, y1: 80, fillcolor: '#dcfce7', opacity: 0.15, line: { width: 0 }, layer: 'below' },
+    { type: 'rect', x0: -0.5, x1: n - 0.5, y0: 80, y1: 100, fillcolor: '#d1fae5', opacity: 0.2, line: { width: 0 }, layer: 'below' },
     { type: 'line', x0: -0.5, x1: pidsA.length - 0.5, y0: meanA, y1: meanA, line: { color: COLOR_A, width: 2, dash: 'dash' } },
     { type: 'line', x0: pidsA.length + 0.5, x1: n - 0.5, y0: meanB, y1: meanB, line: { color: COLOR_B, width: 2, dash: 'dash' } },
   ];
 
   const annotations = [
-    // Condition group labels
-    { x: pidsA[Math.floor(pidsA.length / 2)], y: 104, text: 'Living Dashboard', showarrow: false, font: { color: COLOR_A, size: 12, weight: 'bold' } },
-    { x: xLabels[pidsA.length + 1 + Math.floor(pidsB.length / 2)], y: 104, text: 'Baseline', showarrow: false, font: { color: COLOR_B, size: 12, weight: 'bold' } },
-    // Mean labels
-    { x: pidsA[pidsA.length - 1], y: meanA, text: `M=${meanA}`, showarrow: false, font: { color: COLOR_A, size: 10 }, xanchor: 'left', xshift: 8, yshift: 10 },
-    { x: xLabels[n - 1], y: meanB, text: `M=${meanB}`, showarrow: false, font: { color: COLOR_B, size: 10 }, xanchor: 'left', xshift: 8, yshift: 10 },
-    // Benchmark labels
-    { x: -0.5, y: 50, text: 'Poor (50)', showarrow: false, font: { size: 10, color: '#9ca3af' }, xanchor: 'left', yshift: -10 },
-    { x: -0.5, y: 68, text: 'Avg (68)', showarrow: false, font: { size: 10, color: '#9ca3af' }, xanchor: 'left', yshift: -10 },
-    { x: -0.5, y: 80, text: 'Good (80)', showarrow: false, font: { size: 10, color: '#9ca3af' }, xanchor: 'left', yshift: -10 },
+    // Group labels above the chart area
+    { x: pidsA[Math.floor(pidsA.length / 2)], y: 1.08, text: '<b>Living Dashboard</b>', showarrow: false, font: { color: COLOR_A, size: 13 }, xref: 'x', yref: 'paper' },
+    { x: xLabels[pidsA.length + 1 + Math.floor(pidsB.length / 2)], y: 1.08, text: '<b>Baseline</b>', showarrow: false, font: { color: COLOR_B, size: 13 }, xref: 'x', yref: 'paper' },
+    // Mean labels — positioned at right end of each group, offset above the line
+    { x: pidsA[0], y: meanA, text: `M = ${meanA}`, showarrow: false, font: { color: COLOR_A, size: 11 }, xanchor: 'right', xshift: -6, yshift: 12 },
+    { x: xLabels[pidsA.length + 1], y: meanB, text: `M = ${meanB}`, showarrow: false, font: { color: COLOR_B, size: 11 }, xanchor: 'right', xshift: -6, yshift: 12 },
+    // Benchmark labels — right edge
+    { x: 1, y: 50, text: 'Poor (50)', showarrow: false, font: { size: 10, color: '#94a3b8' }, xref: 'paper', xanchor: 'right', yshift: 8 },
+    { x: 1, y: 68, text: 'Average (68)', showarrow: false, font: { size: 10, color: '#94a3b8' }, xref: 'paper', xanchor: 'right', yshift: 8 },
+    { x: 1, y: 80, text: 'Good (80)', showarrow: false, font: { size: 10, color: '#94a3b8' }, xref: 'paper', xanchor: 'right', yshift: 8 },
   ];
 
   Plotly.newPlot('sus-chart', [trace], {
     ...LAYOUT_BASE,
-    yaxis: { title: 'SUS Score', range: [0, 112], gridcolor: '#f1f5f9' },
+    yaxis: { title: 'SUS Score', range: [0, 105], gridcolor: '#f1f5f9', gridwidth: 1 },
     xaxis: { title: 'Participant', categoryorder: 'array', categoryarray: xLabels },
     shapes, annotations,
     height: 400,
+    margin: { ...LAYOUT_BASE.margin, t: 50 },
   }, { responsive: true, displayModeBar: false });
 }
 
@@ -206,28 +266,30 @@ function renderNASA(nasa) {
   const sdsB = items.map(i => nasa.items[i].B.sd);
 
   const traceA = {
-    x: items, y: meansA, name: 'System A', type: 'bar',
+    x: items, y: meansA, name: 'Living Dashboard', type: 'bar',
     marker: { color: COLOR_A },
-    error_y: { type: 'data', array: sdsA, visible: true, color: '#475569' },
+    error_y: { type: 'data', array: sdsA, visible: true, color: '#475569', thickness: 1.5 },
   };
   const traceB = {
-    x: items, y: meansB, name: 'System B', type: 'bar',
+    x: items, y: meansB, name: 'Baseline', type: 'bar',
     marker: { color: COLOR_B },
-    error_y: { type: 'data', array: sdsB, visible: true, color: '#475569' },
+    error_y: { type: 'data', array: sdsB, visible: true, color: '#475569', thickness: 1.5 },
   };
 
-  const annotations = items.map((item, i) => ({
-    x: item, y: 0.15, text: item === 'Success' ? '(higher = better)' : '(lower = better)',
-    showarrow: false, font: { size: 9, color: '#9ca3af' }, yanchor: 'bottom',
+  const annotations = items.map(item => ({
+    x: item, y: -0.55, text: item === 'Success' ? '(higher = better)' : '(lower = better)',
+    showarrow: false, font: { size: 10, color: '#64748b' }, yref: 'y', xref: 'x',
   }));
 
   Plotly.newPlot('nasa-chart', [traceA, traceB], {
     ...LAYOUT_BASE,
     barmode: 'group',
-    yaxis: { title: 'Rating (1–7)', range: [0, 7.5], gridcolor: '#f1f5f9', dtick: 1 },
-    legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
+    yaxis: { title: 'Rating (1–7)', range: [0, 7.8], gridcolor: '#f1f5f9', dtick: 1 },
+    xaxis: { tickfont: { size: 12 } },
+    legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center', font: { size: 12 } },
     annotations,
-    height: 360,
+    height: 380,
+    margin: { ...LAYOUT_BASE.margin, b: 70 },
   }, { responsive: true, displayModeBar: false });
 }
 
@@ -235,24 +297,23 @@ function renderNASA(nasa) {
 function renderSatisfaction(overall, ai) {
   const labels = ['Overall Satisfaction', 'AI Satisfaction'];
   const traceA = {
-    x: labels, y: [overall.A.mean, ai.A.mean], name: 'System A', type: 'bar',
+    x: labels, y: [overall.A.mean, ai.A.mean], name: 'Living Dashboard', type: 'bar',
     marker: { color: COLOR_A },
-    error_y: { type: 'data', array: [overall.A.sd, ai.A.sd], visible: true, color: '#475569' },
-    text: [overall.A.mean.toFixed(1), ai.A.mean.toFixed(1)], textposition: 'outside',
+    error_y: { type: 'data', array: [overall.A.sd, ai.A.sd], visible: true, color: '#475569', thickness: 1.5 },
   };
   const traceB = {
-    x: labels, y: [overall.B.mean, ai.B.mean], name: 'System B', type: 'bar',
+    x: labels, y: [overall.B.mean, ai.B.mean], name: 'Baseline', type: 'bar',
     marker: { color: COLOR_B },
-    error_y: { type: 'data', array: [overall.B.sd, ai.B.sd], visible: true, color: '#475569' },
-    text: [overall.B.mean.toFixed(1), ai.B.mean.toFixed(1)], textposition: 'outside',
+    error_y: { type: 'data', array: [overall.B.sd, ai.B.sd], visible: true, color: '#475569', thickness: 1.5 },
   };
 
   Plotly.newPlot('sat-chart', [traceA, traceB], {
     ...LAYOUT_BASE,
     barmode: 'group',
     yaxis: { title: 'Rating (1–7)', range: [0, 8], gridcolor: '#f1f5f9', dtick: 1 },
-    legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
-    height: 320,
+    xaxis: { tickfont: { size: 12 } },
+    legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center', font: { size: 12 } },
+    height: 340,
   }, { responsive: true, displayModeBar: false });
 }
 
@@ -263,35 +324,40 @@ function renderLD(ld) {
   const means = entries.map(e => e[1].mean);
   const sds = entries.map(e => e[1].sd);
 
-  // Find highest-variance item
+  // Highest-variance item gets a darker teal with dashed border pattern
   const maxSD = Math.max(...sds);
-  const colors = sds.map(sd => sd === maxSD ? '#f59e0b' : COLOR_A);
+  const colors = sds.map(sd => sd === maxSD ? '#0f766e' : COLOR_A);
+  const lineWidths = sds.map(sd => sd === maxSD ? 2.5 : 0);
+  const lineColors = sds.map(sd => sd === maxSD ? '#134e4a' : 'rgba(0,0,0,0)');
+  const lineDashes = sds.map(sd => sd === maxSD ? 'dash' : 'solid');
 
   const trace = {
     y: labels, x: means, type: 'bar', orientation: 'h',
-    marker: { color: colors },
-    error_x: { type: 'data', array: sds, visible: true, color: '#475569' },
-    text: means.map(m => m.toFixed(1)),
-    textposition: 'outside',
+    marker: {
+      color: colors,
+      line: { width: lineWidths, color: lineColors },
+    },
+    error_x: { type: 'data', array: sds, visible: true, color: '#475569', thickness: 1.5 },
     hovertemplate: '%{y}: %{x:.2f} (SD %{error_x.array:.2f})<extra></extra>',
+    showlegend: false,
   };
 
-  // Find the highlighted item name
   const highlightIdx = sds.indexOf(maxSD);
   const highlightName = labels[highlightIdx];
 
   Plotly.newPlot('ld-chart', [trace], {
     ...LAYOUT_BASE,
-    xaxis: { title: 'Mean Rating (1–7)', range: [0, 8], gridcolor: '#f1f5f9', dtick: 1 },
-    yaxis: { automargin: true },
+    xaxis: { title: 'Mean Rating (1–7)', range: [0, 8.5], gridcolor: '#f1f5f9', dtick: 1 },
+    yaxis: { automargin: true, tickfont: { size: 11 } },
     margin: { ...LAYOUT_BASE.margin, l: 200 },
-    height: 400,
+    height: 420,
     annotations: [{
-      x: means[highlightIdx] + sds[highlightIdx] + 0.3,
+      x: 8.3,
       y: highlightName,
-      text: 'highest variance',
-      showarrow: true, arrowhead: 2, arrowcolor: '#f59e0b',
-      font: { size: 10, color: '#f59e0b' },
+      text: '<b>highest variance</b>',
+      showarrow: true, arrowhead: 2, arrowcolor: '#475569', ax: 30, ay: 0,
+      font: { size: 10, color: '#475569' },
+      xanchor: 'left',
     }],
   }, { responsive: true, displayModeBar: false });
 }
@@ -305,17 +371,17 @@ function renderComparative(comp) {
   const trace = {
     x: vals, y: pids, mode: 'markers', type: 'scatter',
     marker: { size: 14, color: COLOR_A, symbol: 'circle', line: { width: 2, color: '#0f766e' } },
-    hovertemplate: '%{y}: %{x} (' + vals.map(v => scaleLabels[String(v)] || v).join(', ').split(', ').map((_, i) => `${scaleLabels[String(vals[i])]}`)[0] + ')<extra></extra>',
     text: vals.map(v => scaleLabels[String(v)] || v),
-    hoverinfo: 'text+x',
+    hovertemplate: '%{y}: %{text}<extra></extra>',
+    showlegend: false,
   };
 
-  // Mean marker
   const meanTrace = {
     x: [comp.mean], y: ['Mean'], mode: 'markers', type: 'scatter',
     marker: { size: 16, color: '#0f766e', symbol: 'diamond', line: { width: 2, color: '#134e4a' } },
     name: 'Mean',
     showlegend: false,
+    hovertemplate: `Mean: ${comp.mean >= 0 ? '+' : ''}${comp.mean.toFixed(2)}<extra></extra>`,
   };
 
   const shapes = [{
@@ -323,69 +389,26 @@ function renderComparative(comp) {
     line: { color: '#94a3b8', width: 2, dash: 'dot' },
   }];
 
-  const annotations = Object.entries(scaleLabels).map(([val, label]) => ({
-    x: parseFloat(val), y: -0.6, text: label, showarrow: false,
-    font: { size: 9, color: '#9ca3af' }, yshift: -18,
-  }));
-
-  annotations.push({
-    x: comp.mean, y: 'Mean', text: `Mean: ${comp.mean >= 0 ? '+' : ''}${comp.mean.toFixed(2)}`,
-    showarrow: false, font: { size: 11, color: '#0f766e' }, xshift: 60,
-  });
+  const annotations = [
+    { x: comp.mean, y: 'Mean', text: `Mean: ${comp.mean >= 0 ? '+' : ''}${comp.mean.toFixed(2)}`,
+      showarrow: false, font: { size: 12, color: '#0f766e' }, xshift: 55 },
+  ];
 
   Plotly.newPlot('comp-chart', [trace, meanTrace], {
     ...LAYOUT_BASE,
-    xaxis: { range: [-2.5, 2.5], dtick: 1, gridcolor: '#f1f5f9', zeroline: false },
-    yaxis: { automargin: true },
+    xaxis: {
+      range: [-2.5, 2.5], dtick: 1, zeroline: false,
+      showgrid: false,
+      tickvals: [-2, -1, 0, 1, 2],
+      ticktext: ['Much Worse', 'Worse', 'Same', 'Better', 'Much Better'],
+      tickfont: { size: 12, color: '#1e293b' },
+    },
+    yaxis: { automargin: true, showgrid: false, tickfont: { size: 12 } },
     shapes, annotations,
     showlegend: false,
-    height: 280,
-    margin: { ...LAYOUT_BASE.margin, b: 70 },
+    height: 300,
+    margin: { ...LAYOUT_BASE.margin, b: 50 },
   }, { responsive: true, displayModeBar: false });
-}
-
-/* ── Qualitative ─────────────────────────────────────────────────── */
-function renderQualitative(qual) {
-  const container = document.getElementById('qual-container');
-  const pids = Object.keys(qual).sort((a, b) => parseInt(a.slice(1)) - parseInt(b.slice(1)));
-
-  // Group by condition: System A first
-  const sortedPids = pids.sort((a, b) => {
-    if (qual[a].condition !== qual[b].condition) return qual[a].condition === 'A' ? -1 : 1;
-    return parseInt(a.slice(1)) - parseInt(b.slice(1));
-  });
-
-  sortedPids.forEach(pid => {
-    const q = qual[pid];
-    const condClass = q.condition === 'A' ? 'cond-a' : 'cond-b';
-    const badgeClass = q.condition === 'A' ? 'badge-a' : 'badge-b';
-    const condLabel = q.condition === 'A' ? 'System A — Living Dashboard' : 'System B — Baseline';
-
-    const sections = [
-      { label: 'Most Useful / Helpful', text: q.most_useful },
-      { label: 'Confusing, Frustrating, or Missing', text: q.confusing_missing },
-    ];
-    if (q.condition === 'A') {
-      sections.push({ label: 'Comments on the Living Dashboard Concept', text: q.ld_comments });
-    }
-
-    const sectionsHTML = sections.map(s => {
-      const isEmpty = !s.text || s.text === 'nan' || s.text.trim() === '';
-      return `<div class="qual-section">
-        <div class="qual-label">${s.label}</div>
-        <div class="qual-text ${isEmpty ? 'empty' : ''}">${isEmpty ? 'No response' : escapeHtml(s.text)}</div>
-      </div>`;
-    }).join('');
-
-    container.innerHTML += `
-      <div class="qual-card ${condClass}">
-        <div class="qual-header">
-          <span class="qual-pid">${pid}</span>
-          <span class="qual-badge ${badgeClass}">${condLabel}</span>
-        </div>
-        ${sectionsHTML}
-      </div>`;
-  });
 }
 
 function escapeHtml(str) {
