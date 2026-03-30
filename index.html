@@ -263,30 +263,19 @@ const LAYOUT_BASE = {
 
 /* ── PDF Download (Plotly charts) ─────────────────────────────────── */
 function downloadPDF(chartId, filename, size) {
-  const widthPx  = size === 'full' ? 2400 : 1600;
-  const heightEl = document.getElementById(chartId);
-  const aspect   = heightEl.offsetHeight / heightEl.offsetWidth;
-  const heightPx = Math.round(widthPx * aspect);
+  const el = document.getElementById(chartId);
+  const aspect = el.offsetHeight / el.offsetWidth;
+  const { jsPDF } = window.jspdf;
+  const pdfW = size === 'full' ? 297 : 190;
+  const pdfH = Math.round(pdfW * aspect);
 
+  // Export at display dimensions with high pixel density — keeps fonts proportional
   Plotly.toImage(chartId, {
-    format: 'svg', width: widthPx, height: heightPx, scale: 3,
-  }).then(svgDataUrl => {
-    const { jsPDF } = window.jspdf;
-    const pdfW = size === 'full' ? 297 : 190;
-    const pdfH = Math.round(pdfW * aspect);
+    format: 'png', width: el.offsetWidth, height: el.offsetHeight, scale: 4,
+  }).then(dataUrl => {
     const doc = new jsPDF({ orientation: pdfW > pdfH ? 'landscape' : 'portrait', unit: 'mm', format: [pdfW, pdfH] });
-    const img = new Image();
-    img.onload = function() {
-      const canvas = document.createElement('canvas');
-      canvas.width = widthPx * 3; canvas.height = heightPx * 3;
-      const ctx = canvas.getContext('2d');
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      doc.addImage(canvas.toDataURL('image/png', 1.0), 'PNG', 0, 0, pdfW, pdfH, undefined, 'FAST');
-      doc.save(`${filename}.pdf`);
-    };
-    img.src = svgDataUrl;
+    doc.addImage(dataUrl, 'PNG', 0, 0, pdfW, pdfH, undefined, 'FAST');
+    doc.save(`${filename}.pdf`);
   });
 }
 
