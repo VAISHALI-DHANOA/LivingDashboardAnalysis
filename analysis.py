@@ -51,15 +51,15 @@ NASA_KEYWORDS = {
 }
 
 LD_KEYWORDS = {
-    "sensible decisions": "Sensible Decisions",
-    "understood why the dashboard changed": "Understood Layout",
-    "felt in control": "Felt in Control",
-    "comfortable overriding": "Comfortable Overriding",
-    "automated the right amount": "Right Amount",
-    "shrinking of views felt appropriate": "Shrinking Appropriate",
-    "visual changes (shrinking, colour shifts)": "Visual Communication",
-    "way views changed appearance helped me understand": "Appearance Understanding",
-    "hiding/shrinking inactive views helped me focus": "Helped Focus",
+    "sensible decisions": "Made sensible decisions",
+    "understood why the dashboard changed": "Understood layout changes",
+    "felt in control": "Felt in control",
+    "comfortable overriding": "Comfortable overriding",
+    "automated the right amount": "Automated the right amount",
+    "shrinking of views felt appropriate": "Shrinking felt appropriate",
+    "visual changes (shrinking, colour shifts)": "Visual changes communicated state",
+    "way views changed appearance helped me understand": "Appearance aided understanding",
+    "hiding/shrinking inactive views helped me focus": "Shrinking helped focus",
 }
 
 SATISFACTION_KEYWORD = "how satisfied"

@@ -214,8 +214,8 @@
 
 <!-- Satisfaction -->
 <div class="chart-section">
-  <h2>Overall &amp; AI Satisfaction</h2>
-  <p class="chart-desc">Single-item satisfaction on a 1–7 Likert scale. "Overall" = general dashboard satisfaction; "AI" = perceived quality of AI suggestions. Error bars = &plusmn;1 SD.</p>
+  <h2>Overall Satisfaction &amp; Perceived AI Quality</h2>
+  <p class="chart-desc">Single-item satisfaction on a 1–7 Likert scale. "Overall Satisfaction" = general dashboard satisfaction; "Perceived AI Quality" = perceived quality of AI suggestions. Error bars = &plusmn;1 SD.</p>
   <div class="chart-box">
     <div id="sat-chart"></div>
     <div class="download-bar">
@@ -228,7 +228,7 @@
 <!-- LD-Specific -->
 <div class="chart-section">
   <h2>Living Dashboard-Specific Items</h2>
-  <p class="chart-desc">Nine Likert items (1–7) rated only by Living Dashboard participants, capturing perceived quality of adaptive behaviours. Sorted by mean descending. Error bars = &plusmn;1 SD.</p>
+  <p class="chart-desc">Nine Likert items (1–7) rated only by Living Dashboard participants, capturing perceived quality of adaptive behaviours. Sorted by mean descending; dots mark the mean. The dashed line at 4 marks the neutral midpoint. Error bars = &plusmn;1 SD. Note: "Shrinking helped focus" and "Comfortable overriding" showed the highest variance, indicating the most divided opinions among participants.</p>
   <div class="chart-box">
     <div id="ld-chart"></div>
     <div class="download-bar">
@@ -527,7 +527,7 @@ function renderNASA(nasa) {
 
 /* ── Satisfaction ─────────────────────────────────────────────────── */
 function renderSatisfaction(overall, ai) {
-  const labels = ['Overall Satisfaction', 'AI Satisfaction'];
+  const labels = ['Overall Satisfaction', 'Perceived Quality of AI Suggestions'];
   const traceA = {
     x: labels, y: [overall.A.mean, ai.A.mean], name: 'Living Dashboard', type: 'bar',
     marker: { color: COLOR_A },
@@ -551,12 +551,12 @@ function renderSatisfaction(overall, ai) {
 
 /* ── LD-Specific ─────────────────────────────────────────────────── */
 function renderLD(ld) {
-  const entries = Object.entries(ld).sort((a, b) => b[1].mean - a[1].mean);
+  const entries = Object.entries(ld).sort((a, b) => a[1].mean - b[1].mean); // ascending so highest is at top in horizontal bar
   const labels = entries.map(e => e[0]);
   const means = entries.map(e => e[1].mean);
   const sds = entries.map(e => e[1].sd);
 
-  const trace = {
+  const barTrace = {
     y: labels, x: means, type: 'bar', orientation: 'h',
     marker: { color: COLOR_A },
     error_x: { type: 'data', array: sds, visible: true, color: '#475569', thickness: 1.5 },
@@ -564,11 +564,29 @@ function renderLD(ld) {
     showlegend: false,
   };
 
-  Plotly.newPlot('ld-chart', [trace], {
+  const dotTrace = {
+    y: labels, x: means, type: 'scatter', mode: 'markers',
+    marker: { size: 7, color: '#134e4a', symbol: 'circle' },
+    hoverinfo: 'skip',
+    showlegend: false,
+  };
+
+  const shapes = [{
+    type: 'line', x0: 4, x1: 4, y0: -0.5, y1: labels.length - 0.5,
+    line: { color: '#94a3b8', width: 1.5, dash: 'dash' },
+  }];
+
+  const annotations = [{
+    x: 4, y: 1.02, text: 'Neutral (4)', showarrow: false,
+    font: { size: 10, color: '#94a3b8' }, xref: 'x', yref: 'paper',
+  }];
+
+  Plotly.newPlot('ld-chart', [barTrace, dotTrace], {
     ...LAYOUT_BASE,
-    xaxis: { title: 'Mean Rating (1–7)', range: [0, 8.5], gridcolor: '#f1f5f9', dtick: 1 },
+    xaxis: { title: 'Mean Rating (1–7)', range: [0, 7.5], gridcolor: '#f1f5f9', dtick: 1 },
     yaxis: { automargin: true, tickfont: { size: 11 } },
-    margin: { ...LAYOUT_BASE.margin, l: 200 },
+    shapes, annotations,
+    margin: { ...LAYOUT_BASE.margin, l: 250 },
     height: 400,
   }, { responsive: true, displayModeBar: false });
 }

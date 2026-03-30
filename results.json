@@ -468,39 +468,39 @@
     }
   },
   "ld_specific": {
-    "Sensible Decisions": {
+    "Made sensible decisions": {
       "mean": 5.33,
       "sd": 0.52
     },
-    "Understood Layout": {
+    "Understood layout changes": {
       "mean": 6.33,
       "sd": 0.52
     },
-    "Felt in Control": {
+    "Felt in control": {
       "mean": 6.17,
       "sd": 0.75
     },
-    "Comfortable Overriding": {
+    "Comfortable overriding": {
       "mean": 5.83,
       "sd": 1.47
     },
-    "Right Amount": {
+    "Automated the right amount": {
       "mean": 5.83,
       "sd": 1.17
     },
-    "Shrinking Appropriate": {
+    "Shrinking felt appropriate": {
       "mean": 4.33,
       "sd": 1.86
     },
-    "Visual Communication": {
+    "Visual changes communicated state": {
       "mean": 6.5,
       "sd": 0.55
     },
-    "Appearance Understanding": {
+    "Appearance aided understanding": {
       "mean": 5.67,
       "sd": 0.52
     },
-    "Helped Focus": {
+    "Shrinking helped focus": {
       "mean": 5.17,
       "sd": 2.14
     }
